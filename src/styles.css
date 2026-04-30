@@ -28,6 +28,8 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
   --color-emergency: var(--emergency);
   --color-emergency-foreground: var(--emergency-foreground);
   --font-display: "Fraunces", Georgia, serif;
@@ -35,122 +37,91 @@
 }
 
 :root {
-  --radius: 0.75rem;
+  --radius: 0.625rem;
 
-  /* Earthy forest palette — warm cream background, deep forest greens, terracotta accent */
-  --background: oklch(0.975 0.018 85);
-  --foreground: oklch(0.22 0.04 145);
+  /* Warm cream + deep forest green */
+  --background: oklch(0.965 0.025 95);
+  --foreground: oklch(0.24 0.05 150);
 
-  --card: oklch(0.99 0.01 85);
-  --card-foreground: oklch(0.22 0.04 145);
+  --card: oklch(0.985 0.014 90);
+  --card-foreground: oklch(0.24 0.05 150);
 
-  --popover: oklch(0.99 0.01 85);
-  --popover-foreground: oklch(0.22 0.04 145);
+  --popover: oklch(0.99 0.01 90);
+  --popover-foreground: oklch(0.24 0.05 150);
 
-  /* Deep forest green */
-  --primary: oklch(0.38 0.08 155);
-  --primary-foreground: oklch(0.975 0.018 85);
+  --primary: oklch(0.36 0.075 150);
+  --primary-foreground: oklch(0.985 0.014 90);
 
-  /* Soft moss */
-  --secondary: oklch(0.93 0.025 130);
+  --secondary: oklch(0.93 0.025 110);
   --secondary-foreground: oklch(0.28 0.06 150);
 
-  --muted: oklch(0.94 0.018 95);
-  --muted-foreground: oklch(0.45 0.03 140);
+  --muted: oklch(0.93 0.022 95);
+  --muted-foreground: oklch(0.46 0.03 140);
 
-  /* Warm terracotta accent */
-  --accent: oklch(0.68 0.14 45);
-  --accent-foreground: oklch(0.99 0.01 85);
+  --accent: oklch(0.62 0.15 50);
+  --accent-foreground: oklch(0.99 0.01 90);
 
   --destructive: oklch(0.55 0.22 28);
-  --destructive-foreground: oklch(0.99 0.01 85);
+  --destructive-foreground: oklch(0.99 0.01 90);
 
-  /* Emergency red — for SOS / urgent contacts */
   --emergency: oklch(0.58 0.23 25);
-  --emergency-foreground: oklch(0.99 0.01 85);
+  --emergency-foreground: oklch(0.99 0.01 90);
 
-  --border: oklch(0.88 0.02 100);
-  --input: oklch(0.92 0.018 100);
-  --ring: oklch(0.38 0.08 155);
+  --border: oklch(0.86 0.025 95);
+  --input: oklch(0.91 0.022 95);
+  --ring: oklch(0.36 0.075 150);
+
+  --sidebar: oklch(0.945 0.03 100);
+  --sidebar-foreground: oklch(0.28 0.05 150);
 }
 
 .dark {
   --background: oklch(0.18 0.025 150);
-  --foreground: oklch(0.96 0.018 85);
+  --foreground: oklch(0.96 0.018 90);
   --card: oklch(0.22 0.03 150);
-  --card-foreground: oklch(0.96 0.018 85);
+  --card-foreground: oklch(0.96 0.018 90);
   --popover: oklch(0.22 0.03 150);
-  --popover-foreground: oklch(0.96 0.018 85);
+  --popover-foreground: oklch(0.96 0.018 90);
   --primary: oklch(0.78 0.1 145);
   --primary-foreground: oklch(0.18 0.025 150);
   --secondary: oklch(0.28 0.03 150);
-  --secondary-foreground: oklch(0.96 0.018 85);
+  --secondary-foreground: oklch(0.96 0.018 90);
   --muted: oklch(0.26 0.025 150);
   --muted-foreground: oklch(0.7 0.02 130);
-  --accent: oklch(0.7 0.15 45);
+  --accent: oklch(0.7 0.15 50);
   --accent-foreground: oklch(0.18 0.025 150);
   --destructive: oklch(0.65 0.22 28);
-  --destructive-foreground: oklch(0.96 0.018 85);
+  --destructive-foreground: oklch(0.96 0.018 90);
   --emergency: oklch(0.68 0.22 25);
-  --emergency-foreground: oklch(0.99 0.01 85);
+  --emergency-foreground: oklch(0.99 0.01 90);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 12%);
   --ring: oklch(0.78 0.1 145);
+  --sidebar: oklch(0.22 0.03 150);
+  --sidebar-foreground: oklch(0.96 0.018 90);
 }
 
 @layer base {
-  * {
-    border-color: var(--color-border);
-  }
-
-  html, body, #root {
-    height: 100%;
-  }
-
+  * { border-color: var(--color-border); }
+  html, body, #root { height: 100%; }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
-    background-image:
-      radial-gradient(at 12% 8%, color-mix(in oklab, var(--primary) 12%, transparent) 0px, transparent 50%),
-      radial-gradient(at 88% 92%, color-mix(in oklab, var(--accent) 10%, transparent) 0px, transparent 50%);
-    background-attachment: fixed;
   }
-
   h1, h2, h3, .font-display {
     font-family: var(--font-display);
     letter-spacing: -0.02em;
   }
 }
 
-/* Markdown prose styling for chat */
-.wg-prose p {
-  margin: 0 0 0.85em 0;
-  line-height: 1.7;
-}
+/* Markdown prose */
+.wg-prose p { margin: 0 0 0.85em 0; line-height: 1.7; }
 .wg-prose p:last-child { margin-bottom: 0; }
-.wg-prose strong {
-  color: var(--color-primary);
-  font-weight: 600;
-}
-.wg-prose a {
-  color: var(--color-accent);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-.wg-prose ul, .wg-prose ol {
-  margin: 0.5em 0 0.85em 1.25em;
-}
+.wg-prose strong { color: var(--color-primary); font-weight: 600; }
+.wg-prose a { color: var(--color-accent); text-decoration: underline; text-underline-offset: 2px; }
+.wg-prose ul, .wg-prose ol { margin: 0.5em 0 0.85em 1.25em; }
 .wg-prose li { margin: 0.25em 0; line-height: 1.6; }
-.wg-prose code {
-  background: var(--color-muted);
-  padding: 0.1em 0.35em;
-  border-radius: 0.25rem;
-  font-size: 0.9em;
-}
-.wg-prose blockquote {
-  border-left: 3px solid var(--color-accent);
-  padding-left: 0.9em;
-  color: var(--color-muted-foreground);
-  margin: 0.75em 0;
-}
+.wg-prose code { background: var(--color-muted); padding: 0.1em 0.35em; border-radius: 0.25rem; font-size: 0.9em; }
+.wg-prose blockquote { border-left: 3px solid var(--color-accent); padding-left: 0.9em; color: var(--color-muted-foreground); margin: 0.75em 0; }
+.wg-prose h1, .wg-prose h2, .wg-prose h3 { font-family: var(--font-sans); letter-spacing: 0; margin: 0.6em 0 0.3em; font-weight: 600; }
