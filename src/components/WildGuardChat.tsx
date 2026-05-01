@@ -108,7 +108,11 @@ export default function WildGuardChat() {
   const [language, setLanguage] = useState<string>(() => localStorage.getItem(LANG_KEY) || "English");
   const [langOpen, setLangOpen] = useState(false);
   const [pastOpen, setPastOpen] = useState(false);
+  const [rotateKey, setRotateKey] = useState(0);
+  const [slogan, setSlogan] = useState(() => SLOGAN_POOL[Math.floor(Math.random() * SLOGAN_POOL.length)]);
+  const [scenarios, setScenarios] = useState(() => pickRandom(SCENARIO_POOL, 6));
   const scrollRef = useRef<HTMLDivElement>(null);
+  const lastUserSendRef = useRef<number>(0);
 
   const active = useMemo(
     () => conversations.find((c) => c.id === activeId) || null,
