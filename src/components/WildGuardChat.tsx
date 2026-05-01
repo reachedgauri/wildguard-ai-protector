@@ -462,41 +462,40 @@ export default function WildGuardChat() {
           <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
             {empty ? (
               <div className="space-y-7 pt-4">
-                <div className="text-center space-y-3">
+                <div key={`slogan-${rotateKey}`} className="text-center space-y-3 wg-slogan">
                   <h2 className="font-display text-3xl sm:text-[2.6rem] leading-tight text-primary">
-                    Every animal. Every right. Every time.
+                    {slogan.headline}
                   </h2>
                   <div className="text-foreground/80 text-[15px] leading-relaxed space-y-0.5">
-                    <p>Saw something cruel? Report it.</p>
-                    <p>Don't know the law? Ask.</p>
-                    <p>Need to file a complaint? I'll write it for you.</p>
+                    {slogan.lines.map((l, i) => <p key={i}>{l}</p>)}
                   </div>
                 </div>
 
-                <div className="grid gap-2.5 sm:grid-cols-2">
-                  {SCENARIOS.map((s) => (
+                <div key={`scen-${rotateKey}`} className="grid gap-2.5 sm:grid-cols-2">
+                  {scenarios.map((s, idx) => (
                     <button
                       key={s.title}
                       onClick={() => send(s.desc)}
-                      className="flex items-start gap-3 rounded-lg border border-border bg-card px-4 py-3 text-left hover:border-primary/40 hover:shadow-sm transition group"
+                      style={{ animationDelay: `${idx * 60}ms` }}
+                      className="wg-card-pop flex items-start gap-3 rounded-lg border border-border bg-card px-4 py-3 text-left hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
                     >
-                      <span className="text-2xl leading-none mt-0.5">{s.emoji}</span>
+                      <span className="text-2xl leading-none mt-0.5 transition-transform group-hover:scale-110">{s.emoji}</span>
                       <span className="flex-1 min-w-0">
-                        <span className="block text-sm font-semibold text-foreground group-hover:text-primary">{s.title}</span>
+                        <span className="block text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{s.title}</span>
                         <span className="block text-xs text-muted-foreground mt-0.5 leading-relaxed">{s.desc}</span>
                       </span>
                     </button>
                   ))}
                 </div>
 
-                <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
-                  <a href="tel:112" className="inline-flex items-center gap-1.5 rounded-full bg-emergency px-3 py-1.5 text-xs font-medium text-emergency-foreground hover:opacity-90">
+                <div className="flex flex-wrap items-center justify-center gap-2 pt-2 wg-fade-up" style={{ animationDelay: "300ms" }}>
+                  <a href="tel:112" className="inline-flex items-center gap-1.5 rounded-full bg-emergency px-3 py-1.5 text-xs font-medium text-emergency-foreground hover:opacity-90 hover:scale-105 transition-transform wg-pulse-soft">
                     🚨 Emergency 112
                   </a>
-                  <a href="tel:1926" className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground hover:bg-secondary/70">
+                  <a href="tel:1926" className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground hover:bg-secondary/70 hover:scale-105 transition-transform">
                     🌳 Forest 1926
                   </a>
-                  <a href="tel:+91-22-40727382" className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground hover:bg-secondary/70">
+                  <a href="tel:+91-22-40727382" className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground hover:bg-secondary/70 hover:scale-105 transition-transform">
                     🐾 PETA India
                   </a>
                 </div>
@@ -504,15 +503,6 @@ export default function WildGuardChat() {
             ) : (
               <div className="space-y-5">
                 {messages.map((m, i) => <Bubble key={i} msg={m} />)}
-                {loading && messages[messages.length - 1]?.role === "user" && (
-                  <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                    <Loader2 className="h-4 w-4 animate-spin" /> Thinking…
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
 
         {/* Composer */}
         <div className="border-t border-border bg-card/40 backdrop-blur-md">
