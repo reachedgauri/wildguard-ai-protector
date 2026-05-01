@@ -204,6 +204,7 @@ export default function WildGuardChat() {
   async function send(text: string) {
     if (!text.trim() || loading) return;
 
+    lastUserSendRef.current = Date.now();
     let convId = activeId;
     let convTitle = active?.title;
     const userMsg: Msg = { role: "user", content: text.trim() };
