@@ -502,11 +502,24 @@ export default function WildGuardChat() {
               </div>
             ) : (
               <div className="space-y-5">
-                {messages.map((m, i) => <Bubble key={i} msg={m} />)}
+                {messages.map((m, i) => <Bubble key={i} msg={m} isLast={i === messages.length - 1} />)}
+                {loading && messages[messages.length - 1]?.role === "user" && (
+                  <div className="flex items-center gap-2 wg-fade-up">
+                    <span className="wg-thinking-dot" />
+                    <span className="wg-thinking-dot" />
+                    <span className="wg-thinking-dot" />
+                    <span className="wg-shimmer-text text-sm font-medium ml-1">WildGuard is thinking…</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
 
         {/* Composer */}
         <div className="border-t border-border bg-card/40 backdrop-blur-md">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 py-3 relative">
+
             <button
               onClick={newChat}
               className="absolute -top-12 right-4 sm:right-6 inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-lg hover:bg-primary/90 transition"
