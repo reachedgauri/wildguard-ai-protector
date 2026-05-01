@@ -152,6 +152,7 @@ export default function WildGuardChat() {
   function newChat() {
     setActiveId(null);
     setInput("");
+    rotatePrompts();
   }
 
   function deleteConv(id: string) {
