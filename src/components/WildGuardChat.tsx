@@ -123,9 +123,22 @@ export default function WildGuardChat() {
 
   useEffect(() => { saveConvs(conversations); }, [conversations]);
   useEffect(() => { localStorage.setItem(LANG_KEY, language); }, [language]);
+  // Only auto-scroll when the user just sent a message (not on every assistant token).
   useEffect(() => {
+    if (!lastUserSendRef.current) return;
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, loading]);
+    lastUserSendRef.current = 0;
+  }, [messages.length]);
+
+  function rotatePrompts() {
+    setSlogan((prev) => {
+      const others = SLOGAN_POOL.filter((s) => s.headline !== prev.headline);
+      return others[Math.floor(Math.random() * others.length)];
+    });
+    setScenarios(pickRandom(SCENARIO_POOL, 6));
+    setRotateKey((k) => k + 1);
+  }
+
 
   // close popovers on outside click
   useEffect(() => {
