@@ -24,14 +24,66 @@ const LANGUAGES = [
   "संथाली (Santali)", "सिन्धी (Sindhi)",
 ];
 
-const SCENARIOS = [
+const SCENARIO_POOL = [
   { emoji: "🐓", title: "Cockfighting", desc: "Illegal cockfight happening in my area" },
   { emoji: "🦋", title: "Butterfly/insect trade", desc: "Someone is selling rare butterflies online" },
   { emoji: "🐢", title: "Star tortoise as pet", desc: "My neighbour keeps a star tortoise at home" },
   { emoji: "🐔", title: "Factory farm cruelty", desc: "Terrible conditions in a poultry/pig farm" },
   { emoji: "🎪", title: "Animals in circus", desc: "Wild animals being used in a travelling circus" },
   { emoji: "🐚", title: "Coral/marine trade", desc: "Someone selling coral and sea shells" },
+  { emoji: "🐘", title: "Temple elephant abuse", desc: "An elephant chained and beaten at a temple" },
+  { emoji: "🐕", title: "Stray dog cruelty", desc: "Someone is poisoning stray dogs in my colony" },
+  { emoji: "🐅", title: "Tiger skin / parts", desc: "I saw tiger skin being sold in a market" },
+  { emoji: "🦜", title: "Caged exotic birds", desc: "Parrots and macaws caged in a pet shop" },
+  { emoji: "🐍", title: "Snake charmer", desc: "Snake charmer with defanged cobras on the street" },
+  { emoji: "🦌", title: "Deer poaching", desc: "Suspected deer poaching near a forest area" },
+  { emoji: "🐒", title: "Monkey performer", desc: "Performing monkey being used for begging" },
+  { emoji: "🐎", title: "Horse-drawn carriage", desc: "Overworked horse pulling a heavy carriage in summer" },
+  { emoji: "🦏", title: "Rhino horn trade", desc: "Heard whispers about rhino horn being smuggled" },
+  { emoji: "🐄", title: "Illegal slaughter", desc: "Unlicensed slaughterhouse operating nearby" },
+  { emoji: "🐬", title: "Dolphin show", desc: "A dolphinarium opening in my city — is it legal?" },
+  { emoji: "🦅", title: "Kite injured by manjha", desc: "Bird tangled in glass-coated kite string" },
 ];
+
+const SLOGAN_POOL = [
+  {
+    headline: "Every animal. Every right. Every time.",
+    lines: ["Saw something cruel? Report it.", "Don't know the law? Ask.", "Need to file a complaint? I'll write it for you."],
+  },
+  {
+    headline: "Their voice. Your courage. India's law.",
+    lines: ["A witness can stop a crime.", "A complaint can save a species.", "I'll guide you through every step."],
+  },
+  {
+    headline: "Silence helps the cruel. Speak up.",
+    lines: ["Tell me what you saw.", "I'll tell you which law was broken.", "Together we'll get them help."],
+  },
+  {
+    headline: "From a chained elephant to a caged parrot —",
+    lines: ["Every species is protected by some law.", "Every cruelty has a remedy.", "Let's find yours, right now."],
+  },
+  {
+    headline: "Be the reason they survive tonight.",
+    lines: ["One call. One complaint. One rescue.", "I know every helpline in India.", "Ask me anything — I'm here."],
+  },
+  {
+    headline: "Justice for the voiceless starts with you.",
+    lines: ["No legal jargon. No judgement.", "Just clear, caring guidance.", "In any of India's 22 languages."],
+  },
+  {
+    headline: "Witness today. Save a life tomorrow.",
+    lines: ["Cruelty thrives in silence.", "Your report breaks that silence.", "And I'll write the complaint for you."],
+  },
+];
+
+function pickRandom<T>(arr: T[], n: number): T[] {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy.slice(0, n);
+}
 
 const LAWS = [
   { icon: "📜", code: "WPA 1972 (Amended 2022)", desc: "4 schedules · 2,600+ species · Sec 51" },
@@ -56,7 +108,11 @@ export default function WildGuardChat() {
   const [language, setLanguage] = useState<string>(() => localStorage.getItem(LANG_KEY) || "English");
   const [langOpen, setLangOpen] = useState(false);
   const [pastOpen, setPastOpen] = useState(false);
+  const [rotateKey, setRotateKey] = useState(0);
+  const [slogan, setSlogan] = useState(() => SLOGAN_POOL[Math.floor(Math.random() * SLOGAN_POOL.length)]);
+  const [scenarios, setScenarios] = useState(() => pickRandom(SCENARIO_POOL, 6));
   const scrollRef = useRef<HTMLDivElement>(null);
+  const lastUserSendRef = useRef<number>(0);
 
   const active = useMemo(
     () => conversations.find((c) => c.id === activeId) || null,
@@ -67,9 +123,22 @@ export default function WildGuardChat() {
 
   useEffect(() => { saveConvs(conversations); }, [conversations]);
   useEffect(() => { localStorage.setItem(LANG_KEY, language); }, [language]);
+  // Only auto-scroll when the user just sent a message (not on every assistant token).
   useEffect(() => {
+    if (!lastUserSendRef.current) return;
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, loading]);
+    lastUserSendRef.current = 0;
+  }, [messages.length]);
+
+  function rotatePrompts() {
+    setSlogan((prev) => {
+      const others = SLOGAN_POOL.filter((s) => s.headline !== prev.headline);
+      return others[Math.floor(Math.random() * others.length)];
+    });
+    setScenarios(pickRandom(SCENARIO_POOL, 6));
+    setRotateKey((k) => k + 1);
+  }
+
 
   // close popovers on outside click
   useEffect(() => {
@@ -83,6 +152,7 @@ export default function WildGuardChat() {
   function newChat() {
     setActiveId(null);
     setInput("");
+    rotatePrompts();
   }
 
   function deleteConv(id: string) {
@@ -134,6 +204,7 @@ export default function WildGuardChat() {
   async function send(text: string) {
     if (!text.trim() || loading) return;
 
+    lastUserSendRef.current = Date.now();
     let convId = activeId;
     let convTitle = active?.title;
     const userMsg: Msg = { role: "user", content: text.trim() };
@@ -391,51 +462,53 @@ export default function WildGuardChat() {
           <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
             {empty ? (
               <div className="space-y-7 pt-4">
-                <div className="text-center space-y-3">
+                <div key={`slogan-${rotateKey}`} className="text-center space-y-3 wg-slogan">
                   <h2 className="font-display text-3xl sm:text-[2.6rem] leading-tight text-primary">
-                    Every animal. Every right. Every time.
+                    {slogan.headline}
                   </h2>
                   <div className="text-foreground/80 text-[15px] leading-relaxed space-y-0.5">
-                    <p>Saw something cruel? Report it.</p>
-                    <p>Don't know the law? Ask.</p>
-                    <p>Need to file a complaint? I'll write it for you.</p>
+                    {slogan.lines.map((l, i) => <p key={i}>{l}</p>)}
                   </div>
                 </div>
 
-                <div className="grid gap-2.5 sm:grid-cols-2">
-                  {SCENARIOS.map((s) => (
+                <div key={`scen-${rotateKey}`} className="grid gap-2.5 sm:grid-cols-2">
+                  {scenarios.map((s, idx) => (
                     <button
                       key={s.title}
                       onClick={() => send(s.desc)}
-                      className="flex items-start gap-3 rounded-lg border border-border bg-card px-4 py-3 text-left hover:border-primary/40 hover:shadow-sm transition group"
+                      style={{ animationDelay: `${idx * 60}ms` }}
+                      className="wg-card-pop flex items-start gap-3 rounded-lg border border-border bg-card px-4 py-3 text-left hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
                     >
-                      <span className="text-2xl leading-none mt-0.5">{s.emoji}</span>
+                      <span className="text-2xl leading-none mt-0.5 transition-transform group-hover:scale-110">{s.emoji}</span>
                       <span className="flex-1 min-w-0">
-                        <span className="block text-sm font-semibold text-foreground group-hover:text-primary">{s.title}</span>
+                        <span className="block text-sm font-semibold text-foreground group-hover:text-primary transition-colors">{s.title}</span>
                         <span className="block text-xs text-muted-foreground mt-0.5 leading-relaxed">{s.desc}</span>
                       </span>
                     </button>
                   ))}
                 </div>
 
-                <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
-                  <a href="tel:112" className="inline-flex items-center gap-1.5 rounded-full bg-emergency px-3 py-1.5 text-xs font-medium text-emergency-foreground hover:opacity-90">
+                <div className="flex flex-wrap items-center justify-center gap-2 pt-2 wg-fade-up" style={{ animationDelay: "300ms" }}>
+                  <a href="tel:112" className="inline-flex items-center gap-1.5 rounded-full bg-emergency px-3 py-1.5 text-xs font-medium text-emergency-foreground hover:opacity-90 hover:scale-105 transition-transform wg-pulse-soft">
                     🚨 Emergency 112
                   </a>
-                  <a href="tel:1926" className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground hover:bg-secondary/70">
+                  <a href="tel:1926" className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground hover:bg-secondary/70 hover:scale-105 transition-transform">
                     🌳 Forest 1926
                   </a>
-                  <a href="tel:+91-22-40727382" className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground hover:bg-secondary/70">
+                  <a href="tel:+91-22-40727382" className="inline-flex items-center gap-1.5 rounded-full bg-secondary px-3 py-1.5 text-xs font-medium text-secondary-foreground hover:bg-secondary/70 hover:scale-105 transition-transform">
                     🐾 PETA India
                   </a>
                 </div>
               </div>
             ) : (
               <div className="space-y-5">
-                {messages.map((m, i) => <Bubble key={i} msg={m} />)}
+                {messages.map((m, i) => <Bubble key={i} msg={m} isLast={i === messages.length - 1} />)}
                 {loading && messages[messages.length - 1]?.role === "user" && (
-                  <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                    <Loader2 className="h-4 w-4 animate-spin" /> Thinking…
+                  <div className="flex items-center gap-2 wg-fade-up">
+                    <span className="wg-thinking-dot" />
+                    <span className="wg-thinking-dot" />
+                    <span className="wg-thinking-dot" />
+                    <span className="wg-shimmer-text text-sm font-medium ml-1">WildGuard is thinking…</span>
                   </div>
                 )}
               </div>
@@ -446,6 +519,7 @@ export default function WildGuardChat() {
         {/* Composer */}
         <div className="border-t border-border bg-card/40 backdrop-blur-md">
           <div className="mx-auto max-w-3xl px-4 sm:px-6 py-3 relative">
+
             <button
               onClick={newChat}
               className="absolute -top-12 right-4 sm:right-6 inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-lg hover:bg-primary/90 transition"
@@ -528,14 +602,16 @@ function Popover({ children, className = "" }: { children: React.ReactNode; clas
   );
 }
 
-function Bubble({ msg }: { msg: Msg }) {
+function Bubble({ msg, isLast }: { msg: Msg; isLast?: boolean }) {
   const isUser = msg.role === "user";
+  // Float-in animation: assistant messages float up smoothly; user messages get a gentler fade.
+  const animClass = isUser ? "wg-fade-up" : "wg-float-in";
   return (
-    <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
+    <div className={`flex ${isUser ? "justify-end" : "justify-start"} ${animClass}`}>
       <div className={
         isUser
           ? "max-w-[85%] rounded-2xl rounded-br-md bg-primary text-primary-foreground px-4 py-2.5 text-sm leading-relaxed shadow-sm whitespace-pre-wrap"
-          : "max-w-[92%] rounded-2xl rounded-bl-md bg-card border border-border px-4 py-3 text-[15px] text-card-foreground shadow-sm wg-prose"
+          : `max-w-[92%] rounded-2xl rounded-bl-md bg-card border border-border px-4 py-3 text-[15px] text-card-foreground shadow-md wg-prose ${isLast ? "ring-1 ring-primary/10" : ""}`
       }>
         {isUser ? msg.content : <ReactMarkdown>{msg.content || "…"}</ReactMarkdown>}
       </div>

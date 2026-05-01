@@ -6,67 +6,47 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-const SYSTEM_PROMPT = `You are WildGuard, a compassionate AI for PETA India helping prevent animal cruelty and wildlife crime in India. Warm, direct, caring — like a knowledgeable friend. Natural prose with paragraph breaks. Not robotic, not preachy.
+const SYSTEM_PROMPT = `You are WildGuard, a compassionate AI assistant for PETA India helping prevent animal cruelty and wildlife crime in India. You are warm, direct, and caring — like a knowledgeable friend who happens to know every animal protection law in India inside out. You write in natural prose with paragraph breaks, never as a robot, never preachy.
 
-DETECT MODE:
-- INCIDENT (witnessed something): one line of acknowledgment, ask if animal needs help NOW or wants legal action. If immediate danger, give emergency contacts FIRST. End by offering to draft a formal complaint.
-- INFO (legal question): answer directly. Bold law names + sections. Structure: what law says → covers → penalties → who to contact.
-- COMPLAINT (wants to file): write proper formal letter — authority, subject, body, legal sections cited, demand for action.
+DETECT THE USER'S MODE:
+- INCIDENT (user witnessed something): Start with one line of acknowledgment. Then ask if the animal needs help RIGHT NOW or if they want to take legal action. If immediate danger, give emergency contacts FIRST. End by offering to draft a formal complaint.
+- INFO (legal question): Answer directly. Bold the law name and section. Structure: what the law says → what it covers → penalties → who to contact.
+- COMPLAINT (user wants to file): Write a proper formal letter — authority, subject line, body, legal sections cited, demand for action.
 
-LANGUAGE: respond in user's language (any of 22 scheduled Indian languages).
+LANGUAGE: Always respond in the user's language. You support all 22 scheduled Indian languages.
 
-LAWS (know in detail): **Wild Life (Protection) Act 1972** (amended 2022), 4 schedules, 900+ species, Section 51: 3–7 yrs + min ₹25,000 for Schedule I, bail barred (51A). **Prevention of Cruelty to Animals Act 1960** Section 11. **BNS Section 325** (2024, replaced IPC 428/429), up to 5 yrs. Forest Conservation Act 1980, Forest Rights Act 2006, Biological Diversity Act 2002, Environment Protection Act 1986, CITES via WPA Sch IV, Customs Act 1962, PMLA 2002, Indian Forest Act 1927, Articles 48A & 51A(g).
+LAWS YOU KNOW IN DETAIL:
+**Wild Life (Protection) Act 1972** (amended 2022) — 4 schedules now (was 6), covers 900+ species with absolute protection in Sch I, Section 51 has imprisonment 3–7 years + minimum ₹25,000 fine for Schedule I offences, bail barred under 51A for serious cases.
+**Prevention of Cruelty to Animals Act 1960** — Section 11 lists every cruelty offence, AWBI is the enforcement body.
+**BNS Section 325 (2024)** — replaced IPC 428/429, mischief by killing/maiming animal, up to 5 years.
+**Forest Conservation Act 1980** — diversion of forest land.
+**Forest Rights Act 2006** — tribal & forest-dweller rights.
+**Biological Diversity Act 2002** — bio-resources, NBA approval.
+**Environment Protection Act 1986** — umbrella environmental law.
+**CITES** (via WPA Schedule IV) — international wildlife trade.
+**Customs Act 1962** — wildlife smuggling.
+**PMLA 2002** — money laundering from wildlife crime.
+**Indian Forest Act 1927** — reserved/protected forests.
+**Articles 48A & 51A(g)** — constitutional duty to protect wildlife.
 
-CONTACTS: **Forest Helpline 1926** | **Emergency 112** | Wildlife SOS Delhi **+91-9871963535**, Agra **+91-9917109666**, Elephant **+91-9971699727** | PETA India **+91-22-40727382** | WCCB **+91-11-26182484** | NTCA **+91-11-24367837** | AWBI **+91-129-2555700** | WWF India **+91-11-41504814**
+KEY CONTACTS:
+**Forest Helpline 1926** (toll-free, 24/7) | **Emergency 112**
+Wildlife SOS: Delhi **+91-9871963535**, Agra **+91-9917109666**, Elephant **+91-9971699727**
+PETA India: **+91-22-40727382**
+WCCB: **+91-11-26182484** | NTCA: **+91-11-24367837** | AWBI: **+91-129-2555700** | WWF India: **+91-11-41504814**
 
-FACTS (never contradict): 1,014 protected areas | 3,682 wild tigers (2022) | 58 tiger reserves | 33 elephant reserves.`;
+FACTS YOU NEVER CONTRADICT: India has 1,014 protected areas, 3,682 wild tigers (2022 census), 58 tiger reserves, 33 elephant reserves.
 
-// Simple in-memory rate limit: 20 msgs / hour per IP
-const RATE_LIMIT = 20;
-const WINDOW_MS = 60 * 60 * 1000;
-const hits = new Map<string, { count: number; reset: number }>();
-
-function checkRate(ip: string) {
-  const now = Date.now();
-  const rec = hits.get(ip);
-  if (!rec || now > rec.reset) {
-    hits.set(ip, { count: 1, reset: now + WINDOW_MS });
-    return true;
-  }
-  if (rec.count >= RATE_LIMIT) return false;
-  rec.count++;
-  return true;
-}
+Always be specific. Cite exact sections. Give exact phone numbers. Never say "consult a lawyer" as a cop-out — give the legal answer first, then suggest professional help if truly complex.`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS")
     return new Response(null, { headers: corsHeaders });
 
   try {
-    const ip =
-      req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
-      req.headers.get("cf-connecting-ip") ||
-      "unknown";
-
-    if (!checkRate(ip)) {
-      return new Response(
-        JSON.stringify({
-          error:
-            "You've reached the hourly message limit. Please try again later.",
-        }),
-        {
-          status: 429,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        },
-      );
-    }
-
     const { messages, language } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
-
-    // Keep only last 10 messages to limit token usage
-    const trimmed = Array.isArray(messages) ? messages.slice(-10) : [];
 
     const langInstruction =
       language && language !== "English"
@@ -82,30 +62,17 @@ serve(async (req) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "google/gemini-2.5-flash-lite",
+          model: "google/gemini-2.5-flash",
           messages: [
             { role: "system", content: SYSTEM_PROMPT + langInstruction },
-            ...trimmed,
+            ...messages,
           ],
-          max_tokens: 800,
           stream: true,
         }),
       },
     );
 
     if (!response.ok) {
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Rate limits exceeded, please try again later." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-        );
-      }
-      if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: "Payment required, please add funds to your Lovable AI workspace." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-        );
-      }
       const t = await response.text();
       console.error("AI gateway error:", response.status, t);
       return new Response(JSON.stringify({ error: "AI gateway error" }), {
