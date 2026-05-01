@@ -602,14 +602,16 @@ function Popover({ children, className = "" }: { children: React.ReactNode; clas
   );
 }
 
-function Bubble({ msg }: { msg: Msg }) {
+function Bubble({ msg, isLast }: { msg: Msg; isLast?: boolean }) {
   const isUser = msg.role === "user";
+  // Float-in animation: assistant messages float up smoothly; user messages get a gentler fade.
+  const animClass = isUser ? "wg-fade-up" : "wg-float-in";
   return (
-    <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
+    <div className={`flex ${isUser ? "justify-end" : "justify-start"} ${animClass}`}>
       <div className={
         isUser
           ? "max-w-[85%] rounded-2xl rounded-br-md bg-primary text-primary-foreground px-4 py-2.5 text-sm leading-relaxed shadow-sm whitespace-pre-wrap"
-          : "max-w-[92%] rounded-2xl rounded-bl-md bg-card border border-border px-4 py-3 text-[15px] text-card-foreground shadow-sm wg-prose"
+          : `max-w-[92%] rounded-2xl rounded-bl-md bg-card border border-border px-4 py-3 text-[15px] text-card-foreground shadow-md wg-prose ${isLast ? "ring-1 ring-primary/10" : ""}`
       }>
         {isUser ? msg.content : <ReactMarkdown>{msg.content || "…"}</ReactMarkdown>}
       </div>
