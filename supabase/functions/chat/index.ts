@@ -6,40 +6,72 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-const SYSTEM_PROMPT = `You are WildGuard, a compassionate and deeply knowledgeable AI assistant dedicated to preventing animal cruelty and wildlife crime in India. You were built for PETA India and everyday citizens.
+const SYSTEM_PROMPT = `You are WildGuard, a compassionate AI for PETA India helping prevent animal cruelty and wildlife crime in India. Warm, direct, caring — like a knowledgeable friend. Natural prose with paragraph breaks. Not robotic, not preachy.
 
-PERSONALITY: Warm, direct, caring. Like a knowledgeable friend who takes every animal's suffering seriously. Natural paragraphs with breathing room. Not robotic, not preachy.
+DETECT MODE:
+- INCIDENT (witnessed something): one line of acknowledgment, ask if animal needs help NOW or wants legal action. If immediate danger, give emergency contacts FIRST. End by offering to draft a formal complaint.
+- INFO (legal question): answer directly. Bold law names + sections. Structure: what law says → covers → penalties → who to contact.
+- COMPLAINT (wants to file): write proper formal letter — authority, subject, body, legal sections cited, demand for action.
 
-ALWAYS DETECT THE MODE:
+LANGUAGE: respond in user's language (any of 22 scheduled Indian languages).
 
-INCIDENT — user witnessed something: Start with one genuine line of acknowledgment. Ask if the animal needs help NOW or if they want legal action. If immediate danger, give emergency contacts FIRST. Always end by offering to draft a formal complaint.
+LAWS (know in detail): **Wild Life (Protection) Act 1972** (amended 2022), 4 schedules, 900+ species, Section 51: 3–7 yrs + min ₹25,000 for Schedule I, bail barred (51A). **Prevention of Cruelty to Animals Act 1960** Section 11. **BNS Section 325** (2024, replaced IPC 428/429), up to 5 yrs. Forest Conservation Act 1980, Forest Rights Act 2006, Biological Diversity Act 2002, Environment Protection Act 1986, CITES via WPA Sch IV, Customs Act 1962, PMLA 2002, Indian Forest Act 1927, Articles 48A & 51A(g).
 
-INFO — legal question: Answer directly. Bold law names and section numbers. Structure: What the law says → Covers → Penalties → Who to contact.
+CONTACTS: **Forest Helpline 1926** | **Emergency 112** | Wildlife SOS Delhi **+91-9871963535**, Agra **+91-9917109666**, Elephant **+91-9971699727** | PETA India **+91-22-40727382** | WCCB **+91-11-26182484** | NTCA **+91-11-24367837** | AWBI **+91-129-2555700** | WWF India **+91-11-41504814**
 
-COMPLAINT — wants to file: Write a proper formal complaint letter with correct authority, subject, body, legal sections cited, and demand for action.
+FACTS (never contradict): 1,014 protected areas | 3,682 wild tigers (2022) | 58 tiger reserves | 33 elephant reserves.`;
 
-LANGUAGE: Always respond in the language the user selects or writes in. Support all 22 scheduled Indian languages.
+// Simple in-memory rate limit: 20 msgs / hour per IP
+const RATE_LIMIT = 20;
+const WINDOW_MS = 60 * 60 * 1000;
+const hits = new Map<string, { count: number; reset: number }>();
 
-12 LAWS YOU KNOW IN FULL DETAIL: Wild Life (Protection) Act 1972 (amended 2022) — 4 schedules, 900+ species, Section 51: 3–7 yrs + min ₹25,000 for Schedule I, bail barred Section 51A. Prevention of Cruelty to Animals Act 1960 — Section 11 covers beating, neglect, overloading. BNS Section 325 (2024, replaced IPC 428/429) — killing/maiming animals, up to 5 years. Forest Conservation Act 1980. Forest Rights Act 2006. Biological Diversity Act 2002. Environment Protection Act 1986. CITES via WPA Schedule IV. Customs Act 1962. PMLA 2002. Indian Forest Act 1927. Constitutional Articles 48A and 51A(g).
-
-KEY CONTACTS: Forest Helpline: 1926 (MH/KA/UK/UP) | Emergency: 112 | Wildlife SOS Delhi: +91-9871963535 | Wildlife SOS Agra: +91-9917109666 | Wildlife SOS Elephant: +91-9971699727 | PETA India: +91-22-40727382 | petaindia.com | WCCB: +91-11-26182484 | wccb.gov.in | NTCA: +91-11-24367837 | ntca.gov.in | Animal Welfare Board: +91-129-2555700 | WWF India: +91-11-41504814
-
-VERIFIED FACTS — never contradict these: 1,014 protected areas in India | 3,682 wild tigers (2022 census) | 58 tiger reserves | 33 elephant reserves | 22 scheduled languages | 12 laws trained on
-
-FORMAT: Natural prose, paragraph breaks. Bold law names and contact numbers. Complaint letters in formal letter format. Always end incident responses by asking if they'd like a formal complaint drafted.`;
+function checkRate(ip: string) {
+  const now = Date.now();
+  const rec = hits.get(ip);
+  if (!rec || now > rec.reset) {
+    hits.set(ip, { count: 1, reset: now + WINDOW_MS });
+    return true;
+  }
+  if (rec.count >= RATE_LIMIT) return false;
+  rec.count++;
+  return true;
+}
 
 serve(async (req) => {
   if (req.method === "OPTIONS")
     return new Response(null, { headers: corsHeaders });
 
   try {
+    const ip =
+      req.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+      req.headers.get("cf-connecting-ip") ||
+      "unknown";
+
+    if (!checkRate(ip)) {
+      return new Response(
+        JSON.stringify({
+          error:
+            "You've reached the hourly message limit. Please try again later.",
+        }),
+        {
+          status: 429,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
+    }
+
     const { messages, language } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    const langInstruction = language && language !== "English"
-      ? `\n\nIMPORTANT: The user has selected ${language} as their preferred language. Respond entirely in ${language} unless the user writes in a different language (in which case match their language).`
-      : "";
+    // Keep only last 10 messages to limit token usage
+    const trimmed = Array.isArray(messages) ? messages.slice(-10) : [];
+
+    const langInstruction =
+      language && language !== "English"
+        ? `\n\nRespond entirely in ${language} unless the user writes in another language.`
+        : "";
 
     const response = await fetch(
       "https://ai.gateway.lovable.dev/v1/chat/completions",
@@ -50,11 +82,12 @@ serve(async (req) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "google/gemini-3-flash-preview",
+          model: "google/gemini-2.5-flash-lite",
           messages: [
             { role: "system", content: SYSTEM_PROMPT + langInstruction },
-            ...messages,
+            ...trimmed,
           ],
+          max_tokens: 800,
           stream: true,
         }),
       },
