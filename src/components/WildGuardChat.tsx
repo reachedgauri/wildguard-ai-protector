@@ -611,6 +611,60 @@ export default function WildGuardChat() {
           </div>
         </div>
       </main>
+
+      {/* FLASHCARD MODAL */}
+      {flashLaw && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm wg-fade-up"
+          onClick={() => setFlashLaw(null)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className={`relative w-full max-w-md rounded-2xl border border-primary/30 bg-card shadow-2xl overflow-hidden wg-flash-pop bg-gradient-to-br ${flashLaw.color}`}
+          >
+            <button
+              onClick={() => setFlashLaw(null)}
+              className="absolute top-3 right-3 rounded-full bg-background/70 hover:bg-background p-1.5 transition"
+            >
+              <X className="h-4 w-4" />
+            </button>
+
+            <div className="p-6 sm:p-7">
+              <div className="text-5xl mb-3 wg-pulse-soft inline-block">{flashLaw.icon}</div>
+              <div className="text-[10px] tracking-[0.2em] font-semibold text-muted-foreground">FLASHCARD</div>
+              <h3 className="font-display text-2xl sm:text-3xl text-primary mt-1 leading-tight">{flashLaw.code}</h3>
+              <p className="text-sm text-foreground/80 mt-1">{flashLaw.desc}</p>
+              <p className="text-[11px] text-muted-foreground mt-1 italic">{flashLaw.year}</p>
+
+              <div className="mt-5 space-y-3">
+                <FlashRow label="What it covers" value={flashLaw.covers} />
+                <FlashRow label="Penalty" value={flashLaw.penalty} />
+                <FlashRow label="Did you know?" value={flashLaw.funFact} highlight />
+              </div>
+
+              <button
+                onClick={() => {
+                  const law = flashLaw;
+                  setFlashLaw(null);
+                  send(`Tell me more about ${law.code} — ${law.desc}, in detail.`);
+                }}
+                className="mt-6 w-full rounded-xl bg-primary text-primary-foreground py-2.5 text-sm font-semibold hover:bg-primary/90 transition flex items-center justify-center gap-2"
+              >
+                Ask WildGuard about this law →
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function FlashRow({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
+  return (
+    <div className={`rounded-lg border px-3 py-2 ${highlight ? "border-accent/40 bg-accent/5" : "border-border bg-background/60"}`}>
+      <div className="text-[10px] tracking-[0.18em] font-semibold text-muted-foreground">{label.toUpperCase()}</div>
+      <div className="text-sm text-foreground/90 mt-1 leading-relaxed">{value}</div>
     </div>
   );
 }
