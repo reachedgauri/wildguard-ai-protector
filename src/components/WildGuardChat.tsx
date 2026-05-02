@@ -387,15 +387,15 @@ export default function WildGuardChat() {
           {LAWS.map((l) => (
             <button
               key={l.code}
-              onClick={() => send(`Tell me about ${l.code} in detail.`)}
-              className="w-full flex items-start gap-2.5 rounded-md border border-border bg-card/50 px-3 py-2 text-left hover:bg-card hover:border-primary/30 transition group"
+              onClick={() => setFlashLaw(l)}
+              className="w-full flex items-start gap-2.5 rounded-md border border-border bg-card/50 px-3 py-2 text-left hover:bg-card hover:border-primary/30 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200 group"
             >
-              <span className="text-base leading-none mt-0.5">{l.icon}</span>
+              <span className="text-base leading-none mt-0.5 transition-transform group-hover:scale-125 group-hover:rotate-6">{l.icon}</span>
               <span className="flex-1 min-w-0">
-                <span className="block text-xs font-semibold text-foreground truncate">{l.code}</span>
+                <span className="block text-xs font-semibold text-foreground truncate group-hover:text-primary transition-colors">{l.code}</span>
                 <span className="block text-[11px] text-muted-foreground truncate">{l.desc}</span>
               </span>
-              <ChevronDown className="h-3.5 w-3.5 -rotate-90 text-muted-foreground/60 group-hover:text-primary mt-1" />
+              <span className="text-[9px] tracking-widest text-muted-foreground/50 group-hover:text-primary mt-1 font-semibold">FLIP</span>
             </button>
           ))}
         </div>
