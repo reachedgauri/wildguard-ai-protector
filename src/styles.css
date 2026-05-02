@@ -148,6 +148,13 @@
 .wg-card-pop { animation: wg-fade-up 0.5s ease-out both; }
 .wg-pulse-soft { animation: wg-pulse-soft 2.4s ease-in-out infinite; }
 
+@keyframes wg-flash-pop {
+  0% { opacity: 0; transform: scale(0.8) rotateX(-15deg); }
+  60% { transform: scale(1.03) rotateX(2deg); }
+  100% { opacity: 1; transform: scale(1) rotateX(0); }
+}
+.wg-flash-pop { animation: wg-flash-pop 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; transform-style: preserve-3d; }
+
 .wg-thinking-dot {
   display: inline-block;
   width: 6px; height: 6px;
