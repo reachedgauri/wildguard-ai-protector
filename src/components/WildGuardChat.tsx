@@ -164,6 +164,7 @@ export default function WildGuardChat() {
   const [rotateKey, setRotateKey] = useState(0);
   const [slogan, setSlogan] = useState(() => SLOGAN_POOL[Math.floor(Math.random() * SLOGAN_POOL.length)]);
   const [scenarios, setScenarios] = useState(() => pickRandom(SCENARIO_POOL, 6));
+  const [flashLaw, setFlashLaw] = useState<Law | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const lastUserSendRef = useRef<number>(0);
 
