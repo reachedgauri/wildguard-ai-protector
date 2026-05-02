@@ -85,13 +85,66 @@ function pickRandom<T>(arr: T[], n: number): T[] {
   return copy.slice(0, n);
 }
 
-const LAWS = [
-  { icon: "📜", code: "WPA 1972 (Amended 2022)", desc: "4 schedules · 2,600+ species · Sec 51" },
-  { icon: "🐾", code: "PCA Act 1960", desc: "Animal welfare · AWBI · Sec 11" },
-  { icon: "⚖️", code: "BNS Section 325 (2024)", desc: "Replaces IPC 428/429 · Up to 5 yrs" },
-  { icon: "🌳", code: "Forest Conservation Act 1980", desc: "Diversion · clearance · NPV" },
-  { icon: "🌿", code: "Biological Diversity Act 2002", desc: "Bio-resources · NBA · access" },
-  { icon: "🏛️", code: "Constitutional Articles", desc: "48A & 51A(g) — duty to protect" },
+type Law = {
+  icon: string;
+  code: string;
+  desc: string;
+  year: string;
+  penalty: string;
+  covers: string;
+  funFact: string;
+  color: string;
+};
+
+const LAWS: Law[] = [
+  {
+    icon: "📜", code: "WPA 1972", desc: "Wild Life (Protection) Act",
+    year: "1972 · Amended 2022",
+    penalty: "Up to 7 yrs jail + ₹25,000 fine (Sec 51)",
+    covers: "4 schedules · 900+ species · Tiger, elephant, leopard absolutely protected",
+    funFact: "After the 2022 amendment, India dropped from 6 to 4 schedules — simpler but stricter.",
+    color: "from-emerald-500/20 to-emerald-500/5",
+  },
+  {
+    icon: "🐾", code: "PCA Act 1960", desc: "Prevention of Cruelty to Animals",
+    year: "1960",
+    penalty: "Sec 11 — fine ₹50 to ₹100 (under reform)",
+    covers: "Every domestic and captive animal · AWBI enforces",
+    funFact: "India was one of the first countries in Asia to legally recognize animal cruelty as a crime.",
+    color: "from-amber-500/20 to-amber-500/5",
+  },
+  {
+    icon: "⚖️", code: "BNS Sec 325", desc: "Bharatiya Nyaya Sanhita 2024",
+    year: "Effective July 1, 2024",
+    penalty: "Up to 5 years imprisonment + fine",
+    covers: "Mischief by killing/maiming any animal — replaces IPC 428 & 429",
+    funFact: "BNS modernised colonial-era laws — animal cruelty now sits beside other serious crimes.",
+    color: "from-rose-500/20 to-rose-500/5",
+  },
+  {
+    icon: "🌳", code: "FCA 1980", desc: "Forest Conservation Act",
+    year: "1980",
+    penalty: "Imprisonment + Net Present Value (NPV) recovery",
+    covers: "Diversion of forest land · Central clearance required",
+    funFact: "No state can convert forest land for non-forest use without Centre's nod — saved millions of hectares.",
+    color: "from-green-700/20 to-green-700/5",
+  },
+  {
+    icon: "🌿", code: "BD Act 2002", desc: "Biological Diversity Act",
+    year: "2002",
+    penalty: "Up to 5 yrs jail + ₹10 lakh fine",
+    covers: "Bio-resources, traditional knowledge · NBA approval for access",
+    funFact: "It made India one of the first to legally protect indigenous knowledge from biopiracy.",
+    color: "from-teal-500/20 to-teal-500/5",
+  },
+  {
+    icon: "🏛️", code: "Articles 48A & 51A(g)", desc: "Constitution of India",
+    year: "1976 (42nd Amendment)",
+    penalty: "Fundamental duty — not punitive, but courts cite it",
+    covers: "State & every citizen MUST protect environment & wildlife",
+    funFact: "The Supreme Court has used 51A(g) to grant legal personhood to rivers and animals.",
+    color: "from-indigo-500/20 to-indigo-500/5",
+  },
 ];
 
 function uid() { return Math.random().toString(36).slice(2, 10); }
