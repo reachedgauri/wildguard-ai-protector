@@ -85,13 +85,66 @@ function pickRandom<T>(arr: T[], n: number): T[] {
   return copy.slice(0, n);
 }
 
-const LAWS = [
-  { icon: "📜", code: "WPA 1972 (Amended 2022)", desc: "4 schedules · 2,600+ species · Sec 51" },
-  { icon: "🐾", code: "PCA Act 1960", desc: "Animal welfare · AWBI · Sec 11" },
-  { icon: "⚖️", code: "BNS Section 325 (2024)", desc: "Replaces IPC 428/429 · Up to 5 yrs" },
-  { icon: "🌳", code: "Forest Conservation Act 1980", desc: "Diversion · clearance · NPV" },
-  { icon: "🌿", code: "Biological Diversity Act 2002", desc: "Bio-resources · NBA · access" },
-  { icon: "🏛️", code: "Constitutional Articles", desc: "48A & 51A(g) — duty to protect" },
+type Law = {
+  icon: string;
+  code: string;
+  desc: string;
+  year: string;
+  penalty: string;
+  covers: string;
+  funFact: string;
+  color: string;
+};
+
+const LAWS: Law[] = [
+  {
+    icon: "📜", code: "WPA 1972", desc: "Wild Life (Protection) Act",
+    year: "1972 · Amended 2022",
+    penalty: "Up to 7 yrs jail + ₹25,000 fine (Sec 51)",
+    covers: "4 schedules · 900+ species · Tiger, elephant, leopard absolutely protected",
+    funFact: "After the 2022 amendment, India dropped from 6 to 4 schedules — simpler but stricter.",
+    color: "from-emerald-500/20 to-emerald-500/5",
+  },
+  {
+    icon: "🐾", code: "PCA Act 1960", desc: "Prevention of Cruelty to Animals",
+    year: "1960",
+    penalty: "Sec 11 — fine ₹50 to ₹100 (under reform)",
+    covers: "Every domestic and captive animal · AWBI enforces",
+    funFact: "India was one of the first countries in Asia to legally recognize animal cruelty as a crime.",
+    color: "from-amber-500/20 to-amber-500/5",
+  },
+  {
+    icon: "⚖️", code: "BNS Sec 325", desc: "Bharatiya Nyaya Sanhita 2024",
+    year: "Effective July 1, 2024",
+    penalty: "Up to 5 years imprisonment + fine",
+    covers: "Mischief by killing/maiming any animal — replaces IPC 428 & 429",
+    funFact: "BNS modernised colonial-era laws — animal cruelty now sits beside other serious crimes.",
+    color: "from-rose-500/20 to-rose-500/5",
+  },
+  {
+    icon: "🌳", code: "FCA 1980", desc: "Forest Conservation Act",
+    year: "1980",
+    penalty: "Imprisonment + Net Present Value (NPV) recovery",
+    covers: "Diversion of forest land · Central clearance required",
+    funFact: "No state can convert forest land for non-forest use without Centre's nod — saved millions of hectares.",
+    color: "from-green-700/20 to-green-700/5",
+  },
+  {
+    icon: "🌿", code: "BD Act 2002", desc: "Biological Diversity Act",
+    year: "2002",
+    penalty: "Up to 5 yrs jail + ₹10 lakh fine",
+    covers: "Bio-resources, traditional knowledge · NBA approval for access",
+    funFact: "It made India one of the first to legally protect indigenous knowledge from biopiracy.",
+    color: "from-teal-500/20 to-teal-500/5",
+  },
+  {
+    icon: "🏛️", code: "Articles 48A & 51A(g)", desc: "Constitution of India",
+    year: "1976 (42nd Amendment)",
+    penalty: "Fundamental duty — not punitive, but courts cite it",
+    covers: "State & every citizen MUST protect environment & wildlife",
+    funFact: "The Supreme Court has used 51A(g) to grant legal personhood to rivers and animals.",
+    color: "from-indigo-500/20 to-indigo-500/5",
+  },
 ];
 
 function uid() { return Math.random().toString(36).slice(2, 10); }
@@ -111,6 +164,7 @@ export default function WildGuardChat() {
   const [rotateKey, setRotateKey] = useState(0);
   const [slogan, setSlogan] = useState(() => SLOGAN_POOL[Math.floor(Math.random() * SLOGAN_POOL.length)]);
   const [scenarios, setScenarios] = useState(() => pickRandom(SCENARIO_POOL, 6));
+  const [flashLaw, setFlashLaw] = useState<Law | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const lastUserSendRef = useRef<number>(0);
 
@@ -333,15 +387,15 @@ export default function WildGuardChat() {
           {LAWS.map((l) => (
             <button
               key={l.code}
-              onClick={() => send(`Tell me about ${l.code} in detail.`)}
-              className="w-full flex items-start gap-2.5 rounded-md border border-border bg-card/50 px-3 py-2 text-left hover:bg-card hover:border-primary/30 transition group"
+              onClick={() => setFlashLaw(l)}
+              className="w-full flex items-start gap-2.5 rounded-md border border-border bg-card/50 px-3 py-2 text-left hover:bg-card hover:border-primary/30 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200 group"
             >
-              <span className="text-base leading-none mt-0.5">{l.icon}</span>
+              <span className="text-base leading-none mt-0.5 transition-transform group-hover:scale-125 group-hover:rotate-6">{l.icon}</span>
               <span className="flex-1 min-w-0">
-                <span className="block text-xs font-semibold text-foreground truncate">{l.code}</span>
+                <span className="block text-xs font-semibold text-foreground truncate group-hover:text-primary transition-colors">{l.code}</span>
                 <span className="block text-[11px] text-muted-foreground truncate">{l.desc}</span>
               </span>
-              <ChevronDown className="h-3.5 w-3.5 -rotate-90 text-muted-foreground/60 group-hover:text-primary mt-1" />
+              <span className="text-[9px] tracking-widest text-muted-foreground/50 group-hover:text-primary mt-1 font-semibold">FLIP</span>
             </button>
           ))}
         </div>
@@ -557,6 +611,60 @@ export default function WildGuardChat() {
           </div>
         </div>
       </main>
+
+      {/* FLASHCARD MODAL */}
+      {flashLaw && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm wg-fade-up"
+          onClick={() => setFlashLaw(null)}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className={`relative w-full max-w-md rounded-2xl border border-primary/30 bg-card shadow-2xl overflow-hidden wg-flash-pop bg-gradient-to-br ${flashLaw.color}`}
+          >
+            <button
+              onClick={() => setFlashLaw(null)}
+              className="absolute top-3 right-3 rounded-full bg-background/70 hover:bg-background p-1.5 transition"
+            >
+              <X className="h-4 w-4" />
+            </button>
+
+            <div className="p-6 sm:p-7">
+              <div className="text-5xl mb-3 wg-pulse-soft inline-block">{flashLaw.icon}</div>
+              <div className="text-[10px] tracking-[0.2em] font-semibold text-muted-foreground">FLASHCARD</div>
+              <h3 className="font-display text-2xl sm:text-3xl text-primary mt-1 leading-tight">{flashLaw.code}</h3>
+              <p className="text-sm text-foreground/80 mt-1">{flashLaw.desc}</p>
+              <p className="text-[11px] text-muted-foreground mt-1 italic">{flashLaw.year}</p>
+
+              <div className="mt-5 space-y-3">
+                <FlashRow label="What it covers" value={flashLaw.covers} />
+                <FlashRow label="Penalty" value={flashLaw.penalty} />
+                <FlashRow label="Did you know?" value={flashLaw.funFact} highlight />
+              </div>
+
+              <button
+                onClick={() => {
+                  const law = flashLaw;
+                  setFlashLaw(null);
+                  send(`Tell me more about ${law.code} — ${law.desc}, in detail.`);
+                }}
+                className="mt-6 w-full rounded-xl bg-primary text-primary-foreground py-2.5 text-sm font-semibold hover:bg-primary/90 transition flex items-center justify-center gap-2"
+              >
+                Ask WildGuard about this law →
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function FlashRow({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
+  return (
+    <div className={`rounded-lg border px-3 py-2 ${highlight ? "border-accent/40 bg-accent/5" : "border-border bg-background/60"}`}>
+      <div className="text-[10px] tracking-[0.18em] font-semibold text-muted-foreground">{label.toUpperCase()}</div>
+      <div className="text-sm text-foreground/90 mt-1 leading-relaxed">{value}</div>
     </div>
   );
 }
