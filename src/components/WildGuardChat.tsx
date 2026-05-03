@@ -310,42 +310,36 @@ export default function WildGuardChat() {
     <div className="h-dvh overflow-hidden bg-background bg-gradient-to-br from-background via-background to-secondary/30">
       <div className="flex h-dvh max-w-[1500px] mx-auto p-2 sm:p-5 gap-3 sm:gap-4">
         <aside className="hidden lg:flex w-72 shrink-0 flex-col gap-3">
-          <div className="rounded-2xl border border-border bg-card/80 backdrop-blur-md shadow-sm p-5">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/15 text-primary">
-                <Leaf className="h-5 w-5" strokeWidth={2.25} />
+          <div className="rounded-2xl border border-border bg-card/80 backdrop-blur-md shadow-sm flex-1 flex flex-col min-h-0 overflow-hidden">
+            <div className="p-5 border-b border-border/60">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/15 text-primary">
+                  <Leaf className="h-5 w-5" strokeWidth={2.25} />
+                </div>
+                <div>
+                  <div className="font-display text-xl leading-none">WildGuard</div>
+                  <div className="text-[10px] tracking-[0.18em] text-muted-foreground mt-1 font-medium">INDIA WILDLIFE AI</div>
+                </div>
               </div>
-              <div>
-                <div className="font-display text-xl leading-none">WildGuard</div>
-                <div className="text-[10px] tracking-[0.18em] text-muted-foreground mt-1 font-medium">INDIA WILDLIFE AI</div>
-              </div>
+              <p className="text-xs leading-relaxed text-muted-foreground mt-3">
+                Compassionate guide to India's wildlife laws — in any Indian language.
+              </p>
             </div>
-            <p className="text-xs leading-relaxed text-muted-foreground mt-4 pl-3 border-l-2 border-primary/40">
-              Your compassionate guide to India's wildlife laws. Report cruelty, seek help, or learn your rights — in any Indian language.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-border bg-card/80 backdrop-blur-md shadow-sm p-3 grid grid-cols-2 gap-2">
-            <Stat big="12" small="Laws trained on" />
-            <Stat big="22" small="Languages" />
-            <Stat big="900+" small="Protected species" />
-            <Stat big="3" small="Modes of help" />
-          </div>
-
-          <div className="rounded-2xl border border-border bg-card/80 backdrop-blur-md shadow-sm p-3 flex-1 flex flex-col min-h-0">
-            <div className="px-2 pt-1 pb-2 text-[10px] tracking-[0.18em] font-semibold text-muted-foreground">KEY LAWS — TAP TO FLIP</div>
-            <div className="flex-1 overflow-y-auto space-y-1.5 pr-1">
-              {LAWS.map((l) => (
-                <button key={l.code} onClick={() => setFlashLaw(l)}
-                  className="w-full flex items-start gap-2.5 rounded-xl border border-border/60 bg-background/40 px-3 py-2 text-left hover:bg-background hover:border-primary/30 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 group">
-                  <span className="text-base leading-none mt-0.5 transition-transform group-hover:scale-125 group-hover:rotate-6">{l.icon}</span>
-                  <span className="flex-1 min-w-0">
-                    <span className="block text-xs font-semibold text-foreground truncate group-hover:text-primary transition-colors">{l.code}</span>
-                    <span className="block text-[11px] text-muted-foreground truncate">{l.desc}</span>
-                  </span>
-                  <span className="text-[9px] tracking-widest text-muted-foreground/50 group-hover:text-primary mt-1 font-semibold">FLIP</span>
-                </button>
-              ))}
+            <div className="p-3 flex-1 flex flex-col min-h-0">
+              <div className="px-2 pt-1 pb-2 text-[10px] tracking-[0.18em] font-semibold text-muted-foreground">KEY LAWS — TAP TO FLIP</div>
+              <div className="flex-1 overflow-y-auto space-y-1.5 pr-1">
+                {LAWS.map((l) => (
+                  <button key={l.code} onClick={() => setFlashLaw(l)}
+                    className="w-full flex items-start gap-2.5 rounded-xl border border-border/60 bg-background/40 px-3 py-2 text-left hover:bg-background hover:border-primary/30 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 group">
+                    <span className="text-base leading-none mt-0.5 transition-transform group-hover:scale-125 group-hover:rotate-6">{l.icon}</span>
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-xs font-semibold text-foreground truncate group-hover:text-primary transition-colors">{l.code}</span>
+                      <span className="block text-[11px] text-muted-foreground truncate">{l.desc}</span>
+                    </span>
+                    <span className="text-[9px] tracking-widest text-muted-foreground/50 group-hover:text-primary mt-1 font-semibold">FLIP</span>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </aside>
