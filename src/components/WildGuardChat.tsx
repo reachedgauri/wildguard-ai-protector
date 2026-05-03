@@ -295,8 +295,8 @@ export default function WildGuardChat() {
   }
 
   return (
-    <div className="min-h-dvh bg-background bg-gradient-to-br from-background via-background to-secondary/30">
-      <div className="flex min-h-dvh max-w-[1500px] mx-auto p-3 sm:p-5 gap-3 sm:gap-4">
+    <div className="h-dvh overflow-hidden bg-background bg-gradient-to-br from-background via-background to-secondary/30">
+      <div className="flex h-dvh max-w-[1500px] mx-auto p-2 sm:p-5 gap-3 sm:gap-4">
         <aside className="hidden lg:flex w-72 shrink-0 flex-col gap-3">
           <div className="rounded-2xl border border-border bg-card/80 backdrop-blur-md shadow-sm p-5">
             <div className="flex items-center gap-2.5">
