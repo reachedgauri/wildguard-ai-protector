@@ -54,13 +54,13 @@ const SCENARIO_POOL = [
 ];
 
 const SLOGAN_POOL = [
-  { headline: "Every animal. Every right. Every time.", lines: ["Saw something cruel? Report it.", "Don't know the law? Ask.", "Need to file a complaint? I'll write it for you."] },
-  { headline: "Their voice. Your courage. India's law.", lines: ["A witness can stop a crime.", "A complaint can save a species.", "I'll guide you through every step."] },
-  { headline: "Silence helps the cruel. Speak up.", lines: ["Tell me what you saw.", "I'll tell you which law was broken.", "Together we'll get them help."] },
-  { headline: "From a chained elephant to a caged parrot —", lines: ["Every species is protected by some law.", "Every cruelty has a remedy.", "Let's find yours, right now."] },
-  { headline: "Be the reason they survive tonight.", lines: ["One call. One complaint. One rescue.", "I know every helpline in India.", "Ask me anything — I'm here."] },
-  { headline: "Justice for the voiceless starts with you.", lines: ["No legal jargon. No judgement.", "Just clear, caring guidance.", "In any of India's 22 languages."] },
-  { headline: "Witness today. Save a life tomorrow.", lines: ["Cruelty thrives in silence.", "Your report breaks that silence.", "And I'll write the complaint for you."] },
+  { headline: "They can't call 112. You can.", sub: "Report cruelty. I'll handle the law." },
+  { headline: "One witness. One law. One life saved.", sub: "Tell me what you saw — I'll do the rest." },
+  { headline: "Silence is the poacher's best friend.", sub: "Break it. I'll guide every step." },
+  { headline: "The voiceless need a voice with teeth.", sub: "India's wildlife laws, decoded for you." },
+  { headline: "Be the reason they make it to morning.", sub: "Cruelty reported here moves fast." },
+  { headline: "Justice doesn't speak Latin. It speaks your language.", sub: "Ask me in any of 22 Indian languages." },
+  { headline: "Every chain has a section. Every cage has a clause.", sub: "I know them all. Let's use them." },
 ];
 
 function pickRandom<T>(arr: T[], n: number): T[] {
