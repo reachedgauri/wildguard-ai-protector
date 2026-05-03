@@ -543,6 +543,19 @@ export default function WildGuardChat() {
         </main>
       </div>
 
+      {welcome && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm wg-fade-up">
+          <div className="wg-flash-pop rounded-2xl border border-primary/30 bg-card shadow-2xl px-8 py-7 text-center max-w-sm w-full">
+            <div className="mx-auto h-14 w-14 rounded-full bg-primary/15 flex items-center justify-center mb-3">
+              <Loader2 className="h-7 w-7 text-primary animate-spin" />
+            </div>
+            <div className="text-[10px] tracking-[0.22em] font-semibold text-primary/70">WELCOME</div>
+            <h3 className="font-display text-2xl text-primary mt-1">Hi {welcome} 🌿</h3>
+            <p className="text-sm text-foreground/70 mt-2">Loading your saved chats…</p>
+          </div>
+        </div>
+      )}
+
       {flashLaw && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm wg-fade-up" onClick={() => setFlashLaw(null)}>
           <div onClick={(e) => e.stopPropagation()}
