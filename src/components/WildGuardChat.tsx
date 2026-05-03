@@ -104,6 +104,8 @@ export default function WildGuardChat() {
   const [flashLaw, setFlashLaw] = useState<Law | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(false);
+  const [welcome, setWelcome] = useState<string | null>(null);
+  const prevUserRef = useRef<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const lastUserSendRef = useRef<number>(0);
 
