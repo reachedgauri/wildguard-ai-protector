@@ -27,7 +27,7 @@ const safeSet = (k: string, v: string) => { if (isBrowser) window.localStorage.s
 const LANGUAGES = [
   "English", "हिन्दी (Hindi)", "বাংলা (Bengali)", "తెలుగు (Telugu)",
   "मराठी (Marathi)", "தமிழ் (Tamil)", "ગુજરાતી (Gujarati)", "ಕನ್ನಡ (Kannada)",
-  "മലയാളം (Malayalam)", "ਪੰਜਾਬੀ (Punjabi)", "ଓଡ଼িଆ (Odia)", "اردو (Urdu)",
+  "മലയാളം (Malayalam)", "ਪੰਜਾਬੀ (Punjabi)", "ଓଡ଼ିଆ (Odia)", "اردو (Urdu)",
   "অসমীয়া (Assamese)", "मैथिली (Maithili)", "संस्कृतम् (Sanskrit)",
   "नेपाली (Nepali)", "कोंकणी (Konkani)", "मणिपुरी (Manipuri)",
   "བོད་སྐད (Bodo)", "डोगरी (Dogri)", "कश्मीरी (Kashmiri)",
@@ -299,25 +299,36 @@ export default function WildGuardChat() {
   }
 
   // ============== INTRO LANDING ==============
+  // FIX 1: Removed the double-layered text. Now only ONE clean text layer on the right.
   if (!entered) {
     return (
       <div className="relative h-dvh w-full overflow-hidden bg-black">
         <img src={rhinoHero} alt="Indian rhinoceros" className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-black/10 to-black/30" />
-        <div className="absolute top-6 left-6 flex items-center gap-2 text-white/95">
+        {/* Gradient only on the right side where text sits — no left overlay to keep rhino visible */}
+        <div className="absolute inset-0 bg-gradient-to-l from-black/80 via-black/40 to-transparent" />
+
+        {/* Logo top-left */}
+        <div className="absolute top-6 left-6 flex items-center gap-2 text-white/95 z-10">
           <div className="flex h-8 w-8 items-center justify-center rounded-full border border-white/40 text-sm font-display">◐</div>
           <div>
             <div className="font-display text-lg leading-none">WildGuard</div>
             <div className="text-[9px] tracking-[0.25em] mt-1 font-semibold opacity-80">INDIA WILDLIFE AI</div>
           </div>
         </div>
-        <div className="relative h-full flex items-center justify-end px-6 sm:px-16">
+
+        {/* Single text block — right aligned, no bg duplicate text */}
+        <div className="relative h-full flex items-center justify-end px-6 sm:px-16 z-10">
           <div className="text-white text-right max-w-xl wg-fade-up">
-            <h1 className="font-display font-bold text-5xl sm:text-7xl leading-[0.95] tracking-tight">
-              THEIR VOICE.<br/>YOUR ACTION.
+            <h1 className="font-display font-bold text-5xl sm:text-7xl leading-[0.95] tracking-tight drop-shadow-2xl">
+              THEIR VOICE.<br />YOUR ACTION.
             </h1>
-            <button onClick={() => { safeSet(ENTERED_KEY, "1"); setEntered(true); }}
-              className="mt-8 inline-flex items-center gap-3 border border-white/70 px-6 py-3 text-sm tracking-[0.2em] font-semibold hover:bg-white hover:text-black transition-all">
+            <p className="mt-4 text-white/70 text-sm sm:text-base tracking-wide max-w-sm ml-auto">
+              Report cruelty. Know the law. Protect wildlife.
+            </p>
+            <button
+              onClick={() => { safeSet(ENTERED_KEY, "1"); setEntered(true); }}
+              className="mt-8 inline-flex items-center gap-3 border border-white/70 px-6 py-3 text-sm tracking-[0.2em] font-semibold hover:bg-white hover:text-black transition-all duration-300"
+            >
               ENTER <ArrowRight className="h-4 w-4" />
             </button>
           </div>
@@ -328,255 +339,296 @@ export default function WildGuardChat() {
 
   // ============== MAIN APP ==============
   return (
-    <div className="h-dvh overflow-hidden bg-background flex">
-      {/* Sidebar */}
-      <aside className="hidden lg:flex relative w-[280px] shrink-0 flex-col text-white overflow-hidden">
-        <img src={leavesBg} alt="" className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/55 to-black/75" />
-        <div className="relative flex flex-col h-full p-6 overflow-y-auto">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full border border-white/50 text-base font-display">◐</div>
-            <div>
-              <div className="font-display text-xl leading-none">WildGuard</div>
-              <div className="text-[9px] tracking-[0.25em] mt-1.5 font-semibold opacity-80">INDIA WILDLIFE AI</div>
+    <>
+      {/* FIX 2: Inject scrollbar styles for the sidebar */}
+      <style>{`
+        .wg-sidebar-scroll::-webkit-scrollbar {
+          width: 6px;
+        }
+        .wg-sidebar-scroll::-webkit-scrollbar-track {
+          background: rgba(255,255,255,0.05);
+          border-radius: 3px;
+        }
+        .wg-sidebar-scroll::-webkit-scrollbar-thumb {
+          background: rgba(255,255,255,0.45);
+          border-radius: 3px;
+        }
+        .wg-sidebar-scroll::-webkit-scrollbar-thumb:hover {
+          background: rgba(255,255,255,0.7);
+        }
+        .wg-sidebar-scroll {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(255,255,255,0.45) rgba(255,255,255,0.05);
+        }
+      `}</style>
+
+      <div className="h-dvh overflow-hidden bg-background flex">
+        {/* Sidebar */}
+        <aside className="hidden lg:flex relative w-[280px] shrink-0 flex-col text-white overflow-hidden">
+          <img src={leavesBg} alt="" className="absolute inset-0 h-full w-full object-cover" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/55 to-black/75" />
+          {/* FIX 2: Added wg-sidebar-scroll class for bright scrollbar */}
+          <div className="relative flex flex-col h-full p-6 overflow-y-auto wg-sidebar-scroll">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full border border-white/50 text-base font-display">◐</div>
+              <div>
+                <div className="font-display text-xl leading-none">WildGuard</div>
+                <div className="text-[9px] tracking-[0.25em] mt-1.5 font-semibold opacity-80">INDIA WILDLIFE AI</div>
+              </div>
             </div>
-          </div>
 
-          <div className="mt-10">
-            <div className="text-[10px] tracking-[0.25em] font-semibold opacity-80 mb-3">STATS TODAY</div>
-            <div className="grid grid-cols-2 gap-2">
-              <StatTile big="12" small="Laws trained on" />
-              <StatTile big="22" small="Languages" />
-              <StatTile big="900+" small="Protected species" />
-              <StatTile big="3" small="Response modes" />
+            <div className="mt-10">
+              <div className="text-[10px] tracking-[0.25em] font-semibold opacity-80 mb-3">STATS TODAY</div>
+              <div className="grid grid-cols-2 gap-2">
+                <StatTile big="12" small="Laws trained on" />
+                <StatTile big="22" small="Languages" />
+                <StatTile big="900+" small="Protected species" />
+                <StatTile big="3" small="Response modes" />
+              </div>
             </div>
-          </div>
 
-          <div className="mt-8 flex-1">
-            <div className="text-[10px] tracking-[0.25em] font-semibold opacity-80 mb-3">KEY LAWS COVERED</div>
-            <div className="space-y-2">
-              {KEY_LAWS.map((l) => (
-                <div key={l.code} className="rounded-md bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 px-3.5 py-2.5 transition">
-                  <div className="text-[12px] font-semibold leading-tight">{l.code}</div>
-                  <div className="text-[10px] opacity-70 mt-0.5">{l.sub}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </aside>
-
-      {/* Main */}
-      <main className="flex-1 flex flex-col min-w-0 bg-[#f4f1e8]">
-        {/* Header */}
-        <header className="px-4 sm:px-8 pt-4 sm:pt-5 pb-3 flex items-start gap-3 flex-wrap">
-          <div className="min-w-0 flex-1">
-            <h1 className="font-display text-xl sm:text-2xl leading-tight text-primary">WildGuard AI</h1>
-            <p className="text-[11px] text-muted-foreground mt-0.5">Powered by AI · India Wildlife &amp; Animal Cruelty Laws</p>
-          </div>
-
-          <div className="flex items-center gap-2 flex-wrap justify-end">
-            <div className="relative" onClick={(e) => e.stopPropagation()}>
-              <PillBtn icon={History} title="Past Chats" sub="your saved conversations"
-                onClick={() => { setPastOpen((v) => !v); setLangOpen(false); setUserMenu(false); }} active={pastOpen} />
-              {pastOpen && (
-                <Popover>
-                  <div className="px-3 py-2 border-b border-border flex items-center justify-between">
-                    <span className="text-xs font-semibold">Past chats</span>
-                    <button onClick={() => setPastOpen(false)}><X className="h-3.5 w-3.5" /></button>
+            <div className="mt-8 flex-1">
+              <div className="text-[10px] tracking-[0.25em] font-semibold opacity-80 mb-3">KEY LAWS COVERED</div>
+              <div className="space-y-2">
+                {KEY_LAWS.map((l) => (
+                  <div key={l.code} className="rounded-md bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 px-3.5 py-2.5 transition">
+                    <div className="text-[12px] font-semibold leading-tight">{l.code}</div>
+                    <div className="text-[10px] opacity-70 mt-0.5">{l.sub}</div>
                   </div>
-                  {conversations.length === 0 ? (
-                    <div className="px-3 py-6 text-center text-xs text-muted-foreground">No past chats yet.</div>
-                  ) : (
-                    <div className="max-h-80 overflow-y-auto py-1">
-                      {conversations.map((c) => (
-                        <div key={c.id}
-                          className={`group flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-secondary ${activeId === c.id ? "bg-secondary" : ""}`}
-                          onClick={() => { setActiveId(c.id); setPastOpen(false); }}>
-                          <div className="flex-1 min-w-0">
-                            <div className="text-xs font-medium truncate">{c.title}</div>
-                            <div className="text-[10px] text-muted-foreground">{new Date(c.updatedAt).toLocaleDateString()} · {c.messages.length} msgs</div>
-                          </div>
-                          <button onClick={(e) => { e.stopPropagation(); deleteConv(c.id); }}
-                            className="opacity-0 group-hover:opacity-100 p-1 text-muted-foreground hover:text-destructive transition">
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </Popover>
-              )}
+                ))}
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        {/* Main */}
+        <main className="flex-1 flex flex-col min-w-0 bg-[#f4f1e8]">
+          {/* Header */}
+          <header className="px-4 sm:px-8 pt-4 sm:pt-5 pb-3 flex items-start gap-3 flex-wrap">
+            <div className="min-w-0 flex-1">
+              <h1 className="font-display text-xl sm:text-2xl leading-tight text-primary">WildGuard AI</h1>
+              <p className="text-[11px] text-muted-foreground mt-0.5">Powered by AI · India Wildlife &amp; Animal Cruelty Laws</p>
             </div>
 
-            <PillBtn icon={Share2} title="Share Chat" sub="available after first message"
-              onClick={shareChat} disabled={!active || messages.length === 0} />
-            <PillBtn icon={Download} title="Download" sub="save as .txt"
-              onClick={downloadChat} disabled={!active || messages.length === 0} />
-
-            <div className="relative" onClick={(e) => e.stopPropagation()}>
-              <button onClick={() => { setLangOpen((v) => !v); setPastOpen(false); setUserMenu(false); }}
-                className="flex flex-col items-start rounded-md border border-border bg-card/70 px-3 py-1.5 hover:border-primary/40 transition text-left">
-                <div className="flex items-center gap-1.5 text-[12px] font-semibold text-foreground">
-                  <Globe className="h-3.5 w-3.5 text-primary" />
-                  <span>Language: {language.split(" ")[0]}</span>
-                  <ChevronDown className="h-3 w-3 text-muted-foreground" />
-                </div>
-                <div className="text-[10px] text-muted-foreground mt-0.5">bot always replies in this lang</div>
-              </button>
-              {langOpen && (
-                <Popover className="right-0">
-                  <div className="max-h-72 overflow-y-auto py-1">
-                    {LANGUAGES.map((l) => (
-                      <button key={l} onClick={() => { setLanguage(l); setLangOpen(false); toast.success(`Language: ${l}`); }}
-                        className="w-full flex items-center justify-between px-3 py-1.5 text-xs hover:bg-secondary text-left">
-                        <span>{l}</span>
-                        {language === l && <Check className="h-3.5 w-3.5 text-primary" />}
-                      </button>
-                    ))}
-                  </div>
-                </Popover>
-              )}
-            </div>
-
-            {user ? (
+            <div className="flex items-center gap-2 flex-wrap justify-end">
+              {/* FIX 3: Past Chats button — fully functional */}
               <div className="relative" onClick={(e) => e.stopPropagation()}>
-                <button onClick={() => { setUserMenu((v) => !v); setLangOpen(false); setPastOpen(false); }}
-                  className="flex items-center gap-2 rounded-full border border-border bg-card/70 pl-1 pr-3 h-9 text-xs font-medium hover:border-primary/40 transition">
-                  {user.user_metadata?.avatar_url ? (
-                    <img src={user.user_metadata.avatar_url} alt="" className="h-7 w-7 rounded-full" />
-                  ) : (
-                    <div className="h-7 w-7 rounded-full bg-primary/20 text-primary flex items-center justify-center text-[11px] font-bold">
-                      {(user.email?.[0] ?? "U").toUpperCase()}
+                <PillBtn icon={History} title="Past Chats" sub="your saved conversations"
+                  onClick={() => { setPastOpen((v) => !v); setLangOpen(false); setUserMenu(false); }} active={pastOpen} />
+                {pastOpen && (
+                  <Popover>
+                    <div className="px-3 py-2 border-b border-border flex items-center justify-between">
+                      <span className="text-xs font-semibold">Past chats</span>
+                      <button onClick={() => setPastOpen(false)}><X className="h-3.5 w-3.5" /></button>
                     </div>
-                  )}
-                  <ChevronDown className="h-3 w-3 text-muted-foreground" />
-                </button>
-                {userMenu && (
-                  <Popover className="right-0 w-56">
-                    <div className="px-3 py-2 border-b border-border">
-                      <div className="text-xs font-medium truncate">{user.user_metadata?.name || "Signed in"}</div>
-                      <div className="text-[10px] text-muted-foreground truncate">{user.email}</div>
-                    </div>
-                    <button onClick={signOut} className="w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-secondary text-left">
-                      <LogOut className="h-3.5 w-3.5" /> Sign out
-                    </button>
+                    {conversations.length === 0 ? (
+                      <div className="px-3 py-6 text-center text-xs text-muted-foreground">No past chats yet.</div>
+                    ) : (
+                      <div className="max-h-80 overflow-y-auto py-1">
+                        {conversations.map((c) => (
+                          <div key={c.id}
+                            className={`group flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-secondary ${activeId === c.id ? "bg-secondary" : ""}`}
+                            onClick={() => { setActiveId(c.id); setPastOpen(false); }}>
+                            <div className="flex-1 min-w-0">
+                              <div className="text-xs font-medium truncate">{c.title}</div>
+                              <div className="text-[10px] text-muted-foreground">{new Date(c.updatedAt).toLocaleDateString()} · {c.messages.length} msgs</div>
+                            </div>
+                            <button onClick={(e) => { e.stopPropagation(); deleteConv(c.id); }}
+                              className="opacity-0 group-hover:opacity-100 p-1 text-muted-foreground hover:text-destructive transition">
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </Popover>
                 )}
               </div>
-            ) : (
-              <button onClick={signInGoogle} disabled={authLoading}
-                className="flex items-center gap-1.5 rounded-md bg-primary text-primary-foreground px-3 h-9 text-xs font-semibold hover:bg-primary/90 disabled:opacity-60 transition">
-                {authLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <LogIn className="h-3.5 w-3.5" />}
-                Sign in
-              </button>
-            )}
-          </div>
-        </header>
 
-        {/* Body */}
-        <section className="flex-1 flex flex-col min-h-0">
-          <div ref={scrollRef} className="flex-1 overflow-y-auto">
-            <div className="mx-auto max-w-4xl px-4 sm:px-10 py-6 sm:py-8">
-              {empty ? (
-                <div>
-                  <div key={`slogan-${rotateKey}`} className="wg-slogan text-center">
-                    <h2 className="font-display font-bold text-primary leading-[0.95] tracking-tight text-[2rem] sm:text-[3.4rem]">
-                      {slogan}
-                    </h2>
-                    <div className="mt-7 space-y-1.5 text-[13px] sm:text-[15px] text-foreground/70">
-                      <p>Saw something cruel? Report it.</p>
-                      <p>Don't know the law? Ask.</p>
-                      <p>Need to file a complaint? I'll write it for you.</p>
-                    </div>
+              {/* FIX 3: Share Chat — enabled, shows toast if no messages */}
+              <PillBtn
+                icon={Share2}
+                title="Share Chat"
+                sub={active && messages.length > 0 ? "share this conversation" : "available after first message"}
+                onClick={shareChat}
+                disabled={false}
+              />
+
+              {/* FIX 3: Download — enabled, shows toast if no messages */}
+              <PillBtn
+                icon={Download}
+                title="Download"
+                sub={active && messages.length > 0 ? "save as .txt" : "available after first message"}
+                onClick={downloadChat}
+                disabled={false}
+              />
+
+              {/* Language selector */}
+              <div className="relative" onClick={(e) => e.stopPropagation()}>
+                <button onClick={() => { setLangOpen((v) => !v); setPastOpen(false); setUserMenu(false); }}
+                  className="flex flex-col items-start rounded-md border border-border bg-card/70 px-3 py-1.5 hover:border-primary/40 transition text-left">
+                  <div className="flex items-center gap-1.5 text-[12px] font-semibold text-foreground">
+                    <Globe className="h-3.5 w-3.5 text-primary" />
+                    <span>Language: {language.split(" ")[0]}</span>
+                    <ChevronDown className="h-3 w-3 text-muted-foreground" />
                   </div>
+                  <div className="text-[10px] text-muted-foreground mt-0.5">bot always replies in this lang</div>
+                </button>
+                {langOpen && (
+                  <Popover className="right-0">
+                    <div className="max-h-72 overflow-y-auto py-1">
+                      {LANGUAGES.map((l) => (
+                        <button key={l} onClick={() => { setLanguage(l); setLangOpen(false); toast.success(`Language: ${l}`); }}
+                          className="w-full flex items-center justify-between px-3 py-1.5 text-xs hover:bg-secondary text-left">
+                          <span>{l}</span>
+                          {language === l && <Check className="h-3.5 w-3.5 text-primary" />}
+                        </button>
+                      ))}
+                    </div>
+                  </Popover>
+                )}
+              </div>
 
-                  <div key={`scen-${rotateKey}`} className="mt-8 grid gap-3 grid-cols-1 sm:grid-cols-2">
-                    {scenarios.map((s, idx) => (
-                      <button key={s.title} onClick={() => send(s.desc)}
-                        style={{ animationDelay: `${idx * 40}ms` }}
-                        className="wg-card-pop rounded-lg border border-border bg-card/80 px-4 py-3 text-left hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
-                        <div className="text-[13px] font-semibold text-foreground">{s.title}</div>
-                        <div className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed">{s.desc}</div>
+              {/* Auth */}
+              {user ? (
+                <div className="relative" onClick={(e) => e.stopPropagation()}>
+                  <button onClick={() => { setUserMenu((v) => !v); setLangOpen(false); setPastOpen(false); }}
+                    className="flex items-center gap-2 rounded-full border border-border bg-card/70 pl-1 pr-3 h-9 text-xs font-medium hover:border-primary/40 transition">
+                    {user.user_metadata?.avatar_url ? (
+                      <img src={user.user_metadata.avatar_url} alt="" className="h-7 w-7 rounded-full" />
+                    ) : (
+                      <div className="h-7 w-7 rounded-full bg-primary/20 text-primary flex items-center justify-center text-[11px] font-bold">
+                        {(user.email?.[0] ?? "U").toUpperCase()}
+                      </div>
+                    )}
+                    <ChevronDown className="h-3 w-3 text-muted-foreground" />
+                  </button>
+                  {userMenu && (
+                    <Popover className="right-0 w-56">
+                      <div className="px-3 py-2 border-b border-border">
+                        <div className="text-xs font-medium truncate">{user.user_metadata?.name || "Signed in"}</div>
+                        <div className="text-[10px] text-muted-foreground truncate">{user.email}</div>
+                      </div>
+                      <button onClick={signOut} className="w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-secondary text-left">
+                        <LogOut className="h-3.5 w-3.5" /> Sign out
                       </button>
-                    ))}
-                  </div>
-
-                  <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
-                    <a href="tel:112" className="rounded-full bg-emergency text-emergency-foreground px-4 py-2 text-[12px] font-semibold hover:opacity-90 transition wg-pulse-soft">Emergency 112</a>
-                    <a href="tel:1926" className="rounded-full bg-card border border-border px-4 py-2 text-[12px] font-semibold hover:border-primary/40 transition">Forest 1926</a>
-                    <a href="tel:+91-22-40727382" className="rounded-full bg-card border border-border px-4 py-2 text-[12px] font-semibold hover:border-primary/40 transition">PETA India</a>
-                    <button onClick={newChat} className="rounded-full bg-primary text-primary-foreground px-4 py-2 text-[12px] font-semibold hover:bg-primary/90 transition inline-flex items-center gap-1.5">
-                      <Plus className="h-3.5 w-3.5" /> New Chat
-                    </button>
-                  </div>
-
-                  {!user && (
-                    <div className="mt-5 text-center text-[11px] text-muted-foreground italic">
-                      <button onClick={signInGoogle} className="underline hover:text-primary">Sign in with Google</button> to save your chats across devices.
-                    </div>
+                    </Popover>
                   )}
                 </div>
               ) : (
-                <div className="space-y-5">
-                  {messages.map((m, i) => <Bubble key={i} msg={m} isLast={i === messages.length - 1} />)}
-                  {loading && messages[messages.length - 1]?.role === "user" && (
-                    <div className="flex items-center gap-2 wg-fade-up">
-                      <span className="wg-thinking-dot" />
-                      <span className="wg-thinking-dot" />
-                      <span className="wg-thinking-dot" />
-                      <span className="wg-shimmer-text text-sm font-medium ml-1">WildGuard is thinking…</span>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Input bar */}
-          <div className="px-4 sm:px-10 pb-5 pt-2">
-            <div className="mx-auto max-w-4xl">
-              {!empty && (
-                <div className="flex justify-end mb-2">
-                  <button onClick={newChat} className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3.5 py-1.5 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90 transition">
-                    <Plus className="h-3 w-3" /> New Chat
-                  </button>
-                </div>
-              )}
-              <form onSubmit={(e) => { e.preventDefault(); send(input); }}
-                className="flex items-end gap-2 rounded-full border border-border bg-card px-2 py-1.5 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/15 transition shadow-sm">
-                <textarea value={input} onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(input); } }}
-                  placeholder="Describe what you witnessed, or ask about wildlife laws…"
-                  rows={1}
-                  className="flex-1 resize-none bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground max-h-40"
-                  style={{ minHeight: 36 }} />
-                <button type="submit" disabled={!input.trim() || loading}
-                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 transition">
-                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
+                <button onClick={signInGoogle} disabled={authLoading}
+                  className="flex items-center gap-1.5 rounded-md bg-primary text-primary-foreground px-3 h-9 text-xs font-semibold hover:bg-primary/90 disabled:opacity-60 transition">
+                  {authLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <LogIn className="h-3.5 w-3.5" />}
+                  Sign in
                 </button>
-              </form>
-              <p className="text-[10px] text-muted-foreground text-center mt-2">
-                WildGuard · Free · All 22 Indian languages · Responds in your selected language
-              </p>
+              )}
             </div>
-          </div>
-        </section>
-      </main>
+          </header>
 
-      {welcome && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm wg-fade-up">
-          <div className="wg-flash-pop rounded-2xl border border-primary/30 bg-card shadow-2xl px-8 py-7 text-center max-w-sm w-full">
-            <div className="mx-auto h-14 w-14 rounded-full bg-primary/15 flex items-center justify-center mb-3">
-              <Loader2 className="h-7 w-7 text-primary animate-spin" />
+          {/* Body */}
+          <section className="flex-1 flex flex-col min-h-0">
+            <div ref={scrollRef} className="flex-1 overflow-y-auto">
+              <div className="mx-auto max-w-4xl px-4 sm:px-10 py-6 sm:py-8">
+                {empty ? (
+                  <div>
+                    <div key={`slogan-${rotateKey}`} className="wg-slogan text-center">
+                      <h2 className="font-display font-bold text-primary leading-[0.95] tracking-tight text-[2rem] sm:text-[3.4rem]">
+                        {slogan}
+                      </h2>
+                      <div className="mt-7 space-y-1.5 text-[13px] sm:text-[15px] text-foreground/70">
+                        <p>Saw something cruel? Report it.</p>
+                        <p>Don't know the law? Ask.</p>
+                        <p>Need to file a complaint? I'll write it for you.</p>
+                      </div>
+                    </div>
+
+                    <div key={`scen-${rotateKey}`} className="mt-8 grid gap-3 grid-cols-1 sm:grid-cols-2">
+                      {scenarios.map((s, idx) => (
+                        <button key={s.title} onClick={() => send(s.desc)}
+                          style={{ animationDelay: `${idx * 40}ms` }}
+                          className="wg-card-pop rounded-lg border border-border bg-card/80 px-4 py-3 text-left hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+                          <div className="text-[13px] font-semibold text-foreground">{s.title}</div>
+                          <div className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed">{s.desc}</div>
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
+                      <a href="tel:112" className="rounded-full bg-emergency text-emergency-foreground px-4 py-2 text-[12px] font-semibold hover:opacity-90 transition wg-pulse-soft">Emergency 112</a>
+                      <a href="tel:1926" className="rounded-full bg-card border border-border px-4 py-2 text-[12px] font-semibold hover:border-primary/40 transition">Forest 1926</a>
+                      <a href="tel:+91-22-40727382" className="rounded-full bg-card border border-border px-4 py-2 text-[12px] font-semibold hover:border-primary/40 transition">PETA India</a>
+                      <button onClick={newChat} className="rounded-full bg-primary text-primary-foreground px-4 py-2 text-[12px] font-semibold hover:bg-primary/90 transition inline-flex items-center gap-1.5">
+                        <Plus className="h-3.5 w-3.5" /> New Chat
+                      </button>
+                    </div>
+
+                    {!user && (
+                      <div className="mt-5 text-center text-[11px] text-muted-foreground italic">
+                        <button onClick={signInGoogle} className="underline hover:text-primary">Sign in with Google</button> to save your chats across devices.
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-5">
+                    {messages.map((m, i) => <Bubble key={i} msg={m} isLast={i === messages.length - 1} />)}
+                    {loading && messages[messages.length - 1]?.role === "user" && (
+                      <div className="flex items-center gap-2 wg-fade-up">
+                        <span className="wg-thinking-dot" />
+                        <span className="wg-thinking-dot" />
+                        <span className="wg-thinking-dot" />
+                        <span className="wg-shimmer-text text-sm font-medium ml-1">WildGuard is thinking…</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
-            <div className="text-[10px] tracking-[0.22em] font-semibold text-primary/70">WELCOME</div>
-            <h3 className="font-display text-2xl text-primary mt-1">Hi {welcome} 🌿</h3>
-            <p className="text-sm text-foreground/70 mt-2">Loading your saved chats…</p>
+
+            {/* Input bar */}
+            <div className="px-4 sm:px-10 pb-5 pt-2">
+              <div className="mx-auto max-w-4xl">
+                {!empty && (
+                  <div className="flex justify-end mb-2">
+                    <button onClick={newChat} className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3.5 py-1.5 text-[11px] font-semibold text-primary-foreground hover:bg-primary/90 transition">
+                      <Plus className="h-3 w-3" /> New Chat
+                    </button>
+                  </div>
+                )}
+                <form onSubmit={(e) => { e.preventDefault(); send(input); }}
+                  className="flex items-end gap-2 rounded-full border border-border bg-card px-2 py-1.5 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/15 transition shadow-sm">
+                  <textarea value={input} onChange={(e) => setInput(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(input); } }}
+                    placeholder="Describe what you witnessed, or ask about wildlife laws…"
+                    rows={1}
+                    className="flex-1 resize-none bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground max-h-40"
+                    style={{ minHeight: 36 }} />
+                  <button type="submit" disabled={!input.trim() || loading}
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-40 transition">
+                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
+                  </button>
+                </form>
+                <p className="text-[10px] text-muted-foreground text-center mt-2">
+                  WildGuard · Free · All 22 Indian languages · Responds in your selected language
+                </p>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        {welcome && (
+          <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm wg-fade-up">
+            <div className="wg-flash-pop rounded-2xl border border-primary/30 bg-card shadow-2xl px-8 py-7 text-center max-w-sm w-full">
+              <div className="mx-auto h-14 w-14 rounded-full bg-primary/15 flex items-center justify-center mb-3">
+                <Loader2 className="h-7 w-7 text-primary animate-spin" />
+              </div>
+              <div className="text-[10px] tracking-[0.22em] font-semibold text-primary/70">WELCOME</div>
+              <h3 className="font-display text-2xl text-primary mt-1">Hi {welcome} 🌿</h3>
+              <p className="text-sm text-foreground/70 mt-2">Loading your saved chats…</p>
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 }
 
