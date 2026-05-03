@@ -455,25 +455,24 @@ export default function WildGuardChat() {
             <div ref={scrollRef} className="flex-1 overflow-y-auto">
               <div className="mx-auto max-w-3xl px-4 sm:px-8 py-8">
                 {empty ? (
-                  <div className="space-y-6">
-                    <div key={`slogan-${rotateKey}`}
-                      className="wg-slogan relative rounded-2xl border border-primary/15 bg-gradient-to-br from-primary/5 via-card to-accent/5 px-6 py-7 text-center shadow-sm overflow-hidden">
-                      <Sparkles className="absolute top-3 right-3 h-4 w-4 text-primary/40" />
-                      <Sparkles className="absolute bottom-3 left-3 h-3 w-3 text-accent/40" />
-                      <div className="text-[10px] tracking-[0.22em] font-semibold text-primary/70 mb-2">A MESSAGE FOR YOU</div>
-                      <h2 className="font-display text-[1.6rem] sm:text-[2.1rem] leading-[1.15] text-primary">
+                  <div className="space-y-5">
+                    <div key={`slogan-${rotateKey}`} className="wg-slogan text-center px-2 pt-4">
+                      <div className="inline-flex items-center gap-1.5 text-[10px] tracking-[0.22em] font-semibold text-primary/70 mb-3">
+                        <Sparkles className="h-3 w-3" /> A MESSAGE FOR YOU
+                      </div>
+                      <h2 className="font-display text-[1.7rem] sm:text-[2.3rem] leading-[1.1] text-primary">
                         {slogan.headline}
                       </h2>
-                      <p className="text-foreground/70 text-[13px] sm:text-sm leading-relaxed mt-2.5">{slogan.sub}</p>
+                      <p className="text-foreground/70 text-[13px] sm:text-sm leading-relaxed mt-3 max-w-md mx-auto">{slogan.sub}</p>
                     </div>
 
-                    <div key={`scen-${rotateKey}`} className="rounded-2xl border border-border bg-background/40 p-4">
-                      <div className="flex items-center justify-between px-1 mb-3">
+                    <div key={`scen-${rotateKey}`}>
+                      <div className="flex items-center justify-between px-1 mb-2.5">
                         <div className="text-[10px] tracking-[0.22em] font-semibold text-muted-foreground">TRY ONE OF THESE</div>
                         <button onClick={rotatePrompts}
                           className="text-[10px] tracking-wider font-semibold text-primary/80 hover:text-primary transition">SHUFFLE ↻</button>
                       </div>
-                      <div className="grid gap-2 sm:grid-cols-2">
+                      <div className="grid gap-2 grid-cols-1 sm:grid-cols-2">
                         {scenarios.map((s, idx) => (
                           <button key={s.title} onClick={() => send(s.desc)}
                             style={{ animationDelay: `${idx * 50}ms` }}
