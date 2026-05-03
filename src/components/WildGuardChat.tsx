@@ -54,13 +54,13 @@ const SCENARIO_POOL = [
 ];
 
 const SLOGAN_POOL = [
-  { headline: "Every animal. Every right. Every time.", lines: ["Saw something cruel? Report it.", "Don't know the law? Ask.", "Need to file a complaint? I'll write it for you."] },
-  { headline: "Their voice. Your courage. India's law.", lines: ["A witness can stop a crime.", "A complaint can save a species.", "I'll guide you through every step."] },
-  { headline: "Silence helps the cruel. Speak up.", lines: ["Tell me what you saw.", "I'll tell you which law was broken.", "Together we'll get them help."] },
-  { headline: "From a chained elephant to a caged parrot —", lines: ["Every species is protected by some law.", "Every cruelty has a remedy.", "Let's find yours, right now."] },
-  { headline: "Be the reason they survive tonight.", lines: ["One call. One complaint. One rescue.", "I know every helpline in India.", "Ask me anything — I'm here."] },
-  { headline: "Justice for the voiceless starts with you.", lines: ["No legal jargon. No judgement.", "Just clear, caring guidance.", "In any of India's 22 languages."] },
-  { headline: "Witness today. Save a life tomorrow.", lines: ["Cruelty thrives in silence.", "Your report breaks that silence.", "And I'll write the complaint for you."] },
+  { headline: "They can't call 112. You can.", sub: "Report cruelty. I'll handle the law." },
+  { headline: "One witness. One law. One life saved.", sub: "Tell me what you saw — I'll do the rest." },
+  { headline: "Silence is the poacher's best friend.", sub: "Break it. I'll guide every step." },
+  { headline: "The voiceless need a voice with teeth.", sub: "India's wildlife laws, decoded for you." },
+  { headline: "Be the reason they make it to morning.", sub: "Cruelty reported here moves fast." },
+  { headline: "Justice doesn't speak Latin. It speaks your language.", sub: "Ask me in any of 22 Indian languages." },
+  { headline: "Every chain has a section. Every cage has a clause.", sub: "I know them all. Let's use them." },
 ];
 
 function pickRandom<T>(arr: T[], n: number): T[] {
@@ -104,6 +104,8 @@ export default function WildGuardChat() {
   const [flashLaw, setFlashLaw] = useState<Law | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(false);
+  const [welcome, setWelcome] = useState<string | null>(null);
+  const prevUserRef = useRef<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const lastUserSendRef = useRef<number>(0);
 
@@ -119,9 +121,19 @@ export default function WildGuardChat() {
   }, []);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setUser(data.session?.user ?? null));
+    supabase.auth.getSession().then(({ data }) => {
+      setUser(data.session?.user ?? null);
+      prevUserRef.current = data.session?.user?.id ?? null;
+    });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      setUser(session?.user ?? null);
+      const next = session?.user ?? null;
+      setUser(next);
+      if (next && prevUserRef.current !== next.id) {
+        const name = next.user_metadata?.name?.split(" ")[0] || next.email?.split("@")[0] || "friend";
+        setWelcome(name);
+        setTimeout(() => setWelcome(null), 3000);
+      }
+      prevUserRef.current = next?.id ?? null;
       if (session?.user) {
         setTimeout(async () => {
           const { data, error } = await supabase
@@ -295,45 +307,39 @@ export default function WildGuardChat() {
   }
 
   return (
-    <div className="min-h-dvh bg-background bg-gradient-to-br from-background via-background to-secondary/30">
-      <div className="flex min-h-dvh max-w-[1500px] mx-auto p-3 sm:p-5 gap-3 sm:gap-4">
+    <div className="h-dvh overflow-hidden bg-background bg-gradient-to-br from-background via-background to-secondary/30">
+      <div className="flex h-dvh max-w-[1500px] mx-auto p-2 sm:p-5 gap-3 sm:gap-4">
         <aside className="hidden lg:flex w-72 shrink-0 flex-col gap-3">
-          <div className="rounded-2xl border border-border bg-card/80 backdrop-blur-md shadow-sm p-5">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/15 text-primary">
-                <Leaf className="h-5 w-5" strokeWidth={2.25} />
+          <div className="rounded-2xl border border-border bg-card/80 backdrop-blur-md shadow-sm flex-1 flex flex-col min-h-0 overflow-hidden">
+            <div className="p-5 border-b border-border/60">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/15 text-primary">
+                  <Leaf className="h-5 w-5" strokeWidth={2.25} />
+                </div>
+                <div>
+                  <div className="font-display text-xl leading-none">WildGuard</div>
+                  <div className="text-[10px] tracking-[0.18em] text-muted-foreground mt-1 font-medium">INDIA WILDLIFE AI</div>
+                </div>
               </div>
-              <div>
-                <div className="font-display text-xl leading-none">WildGuard</div>
-                <div className="text-[10px] tracking-[0.18em] text-muted-foreground mt-1 font-medium">INDIA WILDLIFE AI</div>
-              </div>
+              <p className="text-xs leading-relaxed text-muted-foreground mt-3">
+                Compassionate guide to India's wildlife laws — in any Indian language.
+              </p>
             </div>
-            <p className="text-xs leading-relaxed text-muted-foreground mt-4 pl-3 border-l-2 border-primary/40">
-              Your compassionate guide to India's wildlife laws. Report cruelty, seek help, or learn your rights — in any Indian language.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-border bg-card/80 backdrop-blur-md shadow-sm p-3 grid grid-cols-2 gap-2">
-            <Stat big="12" small="Laws trained on" />
-            <Stat big="22" small="Languages" />
-            <Stat big="900+" small="Protected species" />
-            <Stat big="3" small="Modes of help" />
-          </div>
-
-          <div className="rounded-2xl border border-border bg-card/80 backdrop-blur-md shadow-sm p-3 flex-1 flex flex-col min-h-0">
-            <div className="px-2 pt-1 pb-2 text-[10px] tracking-[0.18em] font-semibold text-muted-foreground">KEY LAWS — TAP TO FLIP</div>
-            <div className="flex-1 overflow-y-auto space-y-1.5 pr-1">
-              {LAWS.map((l) => (
-                <button key={l.code} onClick={() => setFlashLaw(l)}
-                  className="w-full flex items-start gap-2.5 rounded-xl border border-border/60 bg-background/40 px-3 py-2 text-left hover:bg-background hover:border-primary/30 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 group">
-                  <span className="text-base leading-none mt-0.5 transition-transform group-hover:scale-125 group-hover:rotate-6">{l.icon}</span>
-                  <span className="flex-1 min-w-0">
-                    <span className="block text-xs font-semibold text-foreground truncate group-hover:text-primary transition-colors">{l.code}</span>
-                    <span className="block text-[11px] text-muted-foreground truncate">{l.desc}</span>
-                  </span>
-                  <span className="text-[9px] tracking-widest text-muted-foreground/50 group-hover:text-primary mt-1 font-semibold">FLIP</span>
-                </button>
-              ))}
+            <div className="p-3 flex-1 flex flex-col min-h-0">
+              <div className="px-2 pt-1 pb-2 text-[10px] tracking-[0.18em] font-semibold text-muted-foreground">KEY LAWS — TAP TO FLIP</div>
+              <div className="flex-1 overflow-y-auto space-y-1.5 pr-1">
+                {LAWS.map((l) => (
+                  <button key={l.code} onClick={() => setFlashLaw(l)}
+                    className="w-full flex items-start gap-2.5 rounded-xl border border-border/60 bg-background/40 px-3 py-2 text-left hover:bg-background hover:border-primary/30 hover:-translate-y-0.5 hover:shadow-sm transition-all duration-200 group">
+                    <span className="text-base leading-none mt-0.5 transition-transform group-hover:scale-125 group-hover:rotate-6">{l.icon}</span>
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-xs font-semibold text-foreground truncate group-hover:text-primary transition-colors">{l.code}</span>
+                      <span className="block text-[11px] text-muted-foreground truncate">{l.desc}</span>
+                    </span>
+                    <span className="text-[9px] tracking-widest text-muted-foreground/50 group-hover:text-primary mt-1 font-semibold">FLIP</span>
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </aside>
@@ -449,27 +455,24 @@ export default function WildGuardChat() {
             <div ref={scrollRef} className="flex-1 overflow-y-auto">
               <div className="mx-auto max-w-3xl px-4 sm:px-8 py-8">
                 {empty ? (
-                  <div className="space-y-6">
-                    <div key={`slogan-${rotateKey}`}
-                      className="wg-slogan relative rounded-2xl border border-primary/15 bg-gradient-to-br from-primary/5 via-card to-accent/5 px-6 py-7 text-center shadow-sm overflow-hidden">
-                      <Sparkles className="absolute top-3 right-3 h-4 w-4 text-primary/40" />
-                      <Sparkles className="absolute bottom-3 left-3 h-3 w-3 text-accent/40" />
-                      <div className="text-[10px] tracking-[0.22em] font-semibold text-primary/70 mb-2">A MESSAGE FOR YOU</div>
-                      <h2 className="font-display text-[1.6rem] sm:text-[2.1rem] leading-[1.15] text-primary">
+                  <div className="space-y-5">
+                    <div key={`slogan-${rotateKey}`} className="wg-slogan text-center px-2 pt-4">
+                      <div className="inline-flex items-center gap-1.5 text-[10px] tracking-[0.22em] font-semibold text-primary/70 mb-3">
+                        <Sparkles className="h-3 w-3" /> A MESSAGE FOR YOU
+                      </div>
+                      <h2 className="font-display text-[1.7rem] sm:text-[2.3rem] leading-[1.1] text-primary">
                         {slogan.headline}
                       </h2>
-                      <div className="text-foreground/75 text-[13px] sm:text-sm leading-relaxed space-y-0.5 mt-3">
-                        {slogan.lines.map((l, i) => <p key={i}>{l}</p>)}
-                      </div>
+                      <p className="text-foreground/70 text-[13px] sm:text-sm leading-relaxed mt-3 max-w-md mx-auto">{slogan.sub}</p>
                     </div>
 
-                    <div key={`scen-${rotateKey}`} className="rounded-2xl border border-border bg-background/40 p-4">
-                      <div className="flex items-center justify-between px-1 mb-3">
+                    <div key={`scen-${rotateKey}`}>
+                      <div className="flex items-center justify-between px-1 mb-2.5">
                         <div className="text-[10px] tracking-[0.22em] font-semibold text-muted-foreground">TRY ONE OF THESE</div>
                         <button onClick={rotatePrompts}
                           className="text-[10px] tracking-wider font-semibold text-primary/80 hover:text-primary transition">SHUFFLE ↻</button>
                       </div>
-                      <div className="grid gap-2 sm:grid-cols-2">
+                      <div className="grid gap-2 grid-cols-1 sm:grid-cols-2">
                         {scenarios.map((s, idx) => (
                           <button key={s.title} onClick={() => send(s.desc)}
                             style={{ animationDelay: `${idx * 50}ms` }}
@@ -539,6 +542,19 @@ export default function WildGuardChat() {
           </section>
         </main>
       </div>
+
+      {welcome && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm wg-fade-up">
+          <div className="wg-flash-pop rounded-2xl border border-primary/30 bg-card shadow-2xl px-8 py-7 text-center max-w-sm w-full">
+            <div className="mx-auto h-14 w-14 rounded-full bg-primary/15 flex items-center justify-center mb-3">
+              <Loader2 className="h-7 w-7 text-primary animate-spin" />
+            </div>
+            <div className="text-[10px] tracking-[0.22em] font-semibold text-primary/70">WELCOME</div>
+            <h3 className="font-display text-2xl text-primary mt-1">Hi {welcome} 🌿</h3>
+            <p className="text-sm text-foreground/70 mt-2">Loading your saved chats…</p>
+          </div>
+        </div>
+      )}
 
       {flashLaw && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm wg-fade-up" onClick={() => setFlashLaw(null)}>
