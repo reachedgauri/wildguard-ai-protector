@@ -458,9 +458,7 @@ export default function WildGuardChat() {
                       <h2 className="font-display text-[1.6rem] sm:text-[2.1rem] leading-[1.15] text-primary">
                         {slogan.headline}
                       </h2>
-                      <div className="text-foreground/75 text-[13px] sm:text-sm leading-relaxed space-y-0.5 mt-3">
-                        {slogan.lines.map((l, i) => <p key={i}>{l}</p>)}
-                      </div>
+                      <p className="text-foreground/70 text-[13px] sm:text-sm leading-relaxed mt-2.5">{slogan.sub}</p>
                     </div>
 
                     <div key={`scen-${rotateKey}`} className="rounded-2xl border border-border bg-background/40 p-4">
