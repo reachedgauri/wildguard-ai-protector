@@ -121,9 +121,19 @@ export default function WildGuardChat() {
   }, []);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setUser(data.session?.user ?? null));
+    supabase.auth.getSession().then(({ data }) => {
+      setUser(data.session?.user ?? null);
+      prevUserRef.current = data.session?.user?.id ?? null;
+    });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      setUser(session?.user ?? null);
+      const next = session?.user ?? null;
+      setUser(next);
+      if (next && prevUserRef.current !== next.id) {
+        const name = next.user_metadata?.name?.split(" ")[0] || next.email?.split("@")[0] || "friend";
+        setWelcome(name);
+        setTimeout(() => setWelcome(null), 3000);
+      }
+      prevUserRef.current = next?.id ?? null;
       if (session?.user) {
         setTimeout(async () => {
           const { data, error } = await supabase
