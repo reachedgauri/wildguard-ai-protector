@@ -218,6 +218,7 @@ export default function WildGuardChat() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const lastUserSendRef = useRef<number>(0);
 
+  const t = useMemo(() => L(language), [language]);
   const active = useMemo(() => conversations.find((c) => c.id === activeId) || null, [conversations, activeId]);
   const messages = active?.messages ?? [];
   const empty = messages.length === 0;
@@ -226,9 +227,15 @@ export default function WildGuardChat() {
     setEntered(safeGet(ENTERED_KEY) === "1");
     setConversations(loadConvs());
     setLanguage(safeGet(LANG_KEY) || "English");
-    setSlogan(SLOGAN_POOL[Math.floor(Math.random() * SLOGAN_POOL.length)]);
-    setScenarios(pickRandom(SCENARIO_POOL, 6));
   }, []);
+
+  // Re-localize slogan + scenarios when language changes
+  useEffect(() => {
+    const loc = L(language);
+    setSlogan(loc.slogans[Math.floor(Math.random() * loc.slogans.length)]);
+    setScenarios(pickRandom(loc.scenarios, 6));
+    setRotateKey((k) => k + 1);
+  }, [language]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
