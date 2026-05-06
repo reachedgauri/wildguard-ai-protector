@@ -366,7 +366,7 @@ export default function WildGuardChat() {
         {/* Sidebar */}
         <aside className="hidden lg:flex relative w-[280px] shrink-0 flex-col text-white overflow-hidden">
           <img src={leavesBg} alt="" className="absolute inset-0 h-full w-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/55 to-black/75" />
+          <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/35 via-emerald-950/25 to-emerald-950/55" />
           {/* FIX 2: Added wg-sidebar-scroll class for bright scrollbar */}
           <div className="relative flex flex-col h-full p-6 overflow-y-auto wg-sidebar-scroll">
             <div className="flex items-center gap-2.5">
