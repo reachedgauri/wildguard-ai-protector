@@ -278,11 +278,12 @@ export default function WildGuardChat() {
   }, [messages.length]);
 
   function rotatePrompts() {
+    const loc = L(language);
     setSlogan((prev) => {
-      const others = SLOGAN_POOL.filter((s) => s !== prev);
-      return others[Math.floor(Math.random() * others.length)];
+      const others = loc.slogans.filter((s) => s !== prev);
+      return (others.length ? others : loc.slogans)[Math.floor(Math.random() * Math.max(others.length, 1))];
     });
-    setScenarios(pickRandom(SCENARIO_POOL, 6));
+    setScenarios(pickRandom(loc.scenarios, 6));
     setRotateKey((k) => k + 1);
   }
 
