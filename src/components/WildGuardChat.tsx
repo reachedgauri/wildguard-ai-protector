@@ -663,9 +663,7 @@ export default function WildGuardChat() {
                         {slogan}
                       </h2>
                       <div className="mt-7 space-y-1.5 text-[13px] sm:text-[15px] text-foreground/70">
-                        <p>Saw something cruel? Report it.</p>
-                        <p>Don't know the law? Ask.</p>
-                        <p>Need to file a complaint? I'll write it for you.</p>
+                        {t.helperLines.map((line, i) => <p key={i}>{line}</p>)}
                       </div>
                     </div>
 
@@ -682,7 +680,6 @@ export default function WildGuardChat() {
 
                     <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
                       <a href="tel:112" className="rounded-full bg-emergency text-emergency-foreground px-4 py-2 text-[12px] font-semibold hover:opacity-90 transition wg-pulse-soft">Emergency 112</a>
-                      <a href="tel:1926" className="rounded-full bg-card border border-border px-4 py-2 text-[12px] font-semibold hover:border-primary/40 transition">Forest 1926</a>
                       <a href="tel:+91-22-40727382" className="rounded-full bg-card border border-border px-4 py-2 text-[12px] font-semibold hover:border-primary/40 transition">PETA India</a>
                       <button onClick={newChat} className="rounded-full bg-primary text-primary-foreground px-4 py-2 text-[12px] font-semibold hover:bg-primary/90 transition inline-flex items-center gap-1.5">
                         <Plus className="h-3.5 w-3.5" /> New Chat
@@ -691,7 +688,7 @@ export default function WildGuardChat() {
 
                     {!user && (
                       <div className="mt-5 text-center text-[11px] text-muted-foreground italic">
-                        <button onClick={signInGoogle} className="underline hover:text-primary">Sign in with Google</button> to save your chats across devices.
+                        <button onClick={signInGoogle} className="underline hover:text-primary">{t.signInGoogle}</button> — {t.saveHint}
                       </div>
                     )}
                   </div>
