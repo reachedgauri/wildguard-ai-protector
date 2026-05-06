@@ -58,6 +58,122 @@ const SLOGAN_POOL = [
   "THEY CAN'T CALL 112. YOU CAN.",
 ];
 
+// Localized UI content. Falls back to English for languages not listed.
+type LocalContent = {
+  slogans: string[];
+  scenarios: { title: string; desc: string }[];
+  helperLines: string[];
+  placeholder: string;
+  saveHint: string;
+  signInGoogle: string;
+  signInOther: string;
+};
+
+const LOCALES: Record<string, Partial<LocalContent>> = {
+  "हिन्दी (Hindi)": {
+    slogans: [
+      "हर जानवर। हर अधिकार। हर बार।",
+      "उनकी आवाज़। आपका कदम।",
+      "चुप्पी तोड़ो। क्रूरता रोको।",
+      "एक गवाह। एक कानून। एक ज़िंदगी।",
+      "बेज़ुबानों के लिए न्याय।",
+      "वे 112 नहीं कर सकते। आप कर सकते हैं।",
+    ],
+    scenarios: [
+      { title: "मुर्गों की लड़ाई", desc: "मेरे इलाके में अवैध मुर्गा-लड़ाई हो रही है" },
+      { title: "तितली/कीट व्यापार", desc: "कोई ऑनलाइन दुर्लभ तितलियाँ बेच रहा है" },
+      { title: "स्टार कछुआ पालतू", desc: "मेरा पड़ोसी घर में स्टार कछुआ रखता है" },
+      { title: "फार्म में क्रूरता", desc: "एक पोल्ट्री/सूअर फार्म में भयानक हालात हैं" },
+      { title: "सर्कस में जानवर", desc: "घूमने वाले सर्कस में जंगली जानवरों का इस्तेमाल" },
+      { title: "मूंगा/समुद्री व्यापार", desc: "कोई मूंगा और सीपियाँ बेच रहा है" },
+      { title: "मंदिर के हाथी से क्रूरता", desc: "मंदिर में एक हाथी जंजीर में बंधा और पीटा जा रहा है" },
+      { title: "आवारा कुत्तों से क्रूरता", desc: "मेरी कॉलोनी में कोई आवारा कुत्तों को ज़हर दे रहा है" },
+      { title: "बाघ की खाल/अंग", desc: "मैंने बाज़ार में बाघ की खाल बिकती देखी" },
+      { title: "पिंजरे में विदेशी पक्षी", desc: "पालतू दुकान में तोते और मकाओ कैद हैं" },
+      { title: "सपेरा", desc: "सड़क पर दांत निकाले गए कोबरा के साथ सपेरा" },
+      { title: "हिरण का शिकार", desc: "जंगल के पास हिरण के शिकार का संदेह" },
+    ],
+    helperLines: [
+      "कुछ क्रूर देखा? रिपोर्ट करें।",
+      "कानून नहीं जानते? पूछिए।",
+      "शिकायत दर्ज करवानी है? मैं लिख दूँगा।",
+    ],
+    placeholder: "जो देखा वो बताइए, या वन्यजीव कानून पूछिए…",
+    saveHint: "अपनी चैट सहेजने के लिए साइन इन करें।",
+    signInGoogle: "Google से साइन इन",
+    signInOther: "दूसरा खाता",
+  },
+  "বাংলা (Bengali)": {
+    slogans: [
+      "প্রতিটি প্রাণী। প্রতিটি অধিকার। প্রতিবার।",
+      "ওদের কণ্ঠস্বর। আপনার পদক্ষেপ।",
+      "নীরবতা ভাঙুন। নিষ্ঠুরতা থামান।",
+      "এক সাক্ষী। এক আইন। এক জীবন।",
+      "নির্বাকদের জন্য ন্যায়।",
+    ],
+    scenarios: [
+      { title: "মোরগ লড়াই", desc: "আমার এলাকায় বেআইনি মোরগ লড়াই চলছে" },
+      { title: "প্রজাপতি/পোকা ব্যবসা", desc: "কেউ অনলাইনে বিরল প্রজাপতি বিক্রি করছে" },
+      { title: "তারা কচ্ছপ পোষা", desc: "প্রতিবেশী বাড়িতে তারা কচ্ছপ রেখেছে" },
+      { title: "খামারে নিষ্ঠুরতা", desc: "একটি পোল্ট্রি/শূকর খামারে ভয়ানক অবস্থা" },
+      { title: "সার্কাসে প্রাণী", desc: "ভ্রাম্যমাণ সার্কাসে বন্য প্রাণী ব্যবহার" },
+      { title: "প্রবাল/সামুদ্রিক ব্যবসা", desc: "কেউ প্রবাল ও শঙ্খ বিক্রি করছে" },
+    ],
+    helperLines: [
+      "নিষ্ঠুর কিছু দেখেছেন? রিপোর্ট করুন।",
+      "আইন জানেন না? জিজ্ঞেস করুন।",
+      "অভিযোগ দাখিল করতে চান? আমি লিখে দেব।",
+    ],
+    placeholder: "যা দেখেছেন বলুন, অথবা বন্যপ্রাণী আইন জিজ্ঞেস করুন…",
+    saveHint: "চ্যাট সংরক্ষণ করতে সাইন ইন করুন।",
+    signInGoogle: "Google দিয়ে সাইন ইন",
+    signInOther: "অন্য অ্যাকাউন্ট",
+  },
+  "தமிழ் (Tamil)": {
+    slogans: [
+      "ஒவ்வொரு உயிரும். ஒவ்வொரு உரிமையும். ஒவ்வொரு முறையும்.",
+      "அவற்றின் குரல். உங்கள் செயல்.",
+      "மௌனத்தை உடை. கொடுமையை முடி.",
+      "ஓர் சாட்சி. ஓர் சட்டம். ஓர் உயிர்.",
+    ],
+    scenarios: [
+      { title: "கோழிச் சண்டை", desc: "என் பகுதியில் சட்டவிரோத கோழிச் சண்டை" },
+      { title: "வண்ணத்துப்பூச்சி வர்த்தகம்", desc: "ஆன்லைனில் அரிய வண்ணத்துப்பூச்சிகள் விற்பனை" },
+      { title: "நட்சத்திர ஆமை", desc: "அண்டை வீட்டில் நட்சத்திர ஆமை வளர்ப்பு" },
+      { title: "சர்க்கஸில் விலங்குகள்", desc: "சுற்றும் சர்க்கஸில் காட்டு விலங்குகள்" },
+      { title: "கோயில் யானை துன்புறுத்தல்", desc: "கோயிலில் சங்கிலியில் கட்டப்பட்ட யானை" },
+      { title: "தெரு நாய் கொடுமை", desc: "காலனியில் தெரு நாய்களுக்கு விஷம்" },
+    ],
+    helperLines: [
+      "கொடுமை கண்டீர்களா? புகார் அளியுங்கள்.",
+      "சட்டம் தெரியவில்லையா? கேளுங்கள்.",
+      "புகார் தாக்கல் செய்ய வேண்டுமா? நான் எழுதுகிறேன்.",
+    ],
+    placeholder: "நீங்கள் கண்டதை விளக்குங்கள் அல்லது சட்டம் பற்றி கேளுங்கள்…",
+    saveHint: "உங்கள் உரையாடலைச் சேமிக்க உள்நுழையவும்.",
+    signInGoogle: "Google மூலம் உள்நுழை",
+    signInOther: "வேறு கணக்கு",
+  },
+};
+
+function L(language: string): LocalContent {
+  const fallback: LocalContent = {
+    slogans: SLOGAN_POOL,
+    scenarios: SCENARIO_POOL,
+    helperLines: [
+      "Saw something cruel? Report it.",
+      "Don't know the law? Ask.",
+      "Need to file a complaint? I'll write it for you.",
+    ],
+    placeholder: "Describe what you witnessed, or ask about wildlife laws…",
+    saveHint: "Sign in to save your chats across devices.",
+    signInGoogle: "Sign in with Google",
+    signInOther: "Use another account",
+  };
+  const loc = LOCALES[language] || {};
+  return { ...fallback, ...loc } as LocalContent;
+}
+
 const KEY_LAWS = [
   { code: "WPA 1972 (Amended 2022)", sub: "4 schedules · 2,600+ species" },
   { code: "PCA Act 1960", sub: "Animal welfare · AWBI · Sec 11" },
@@ -102,6 +218,7 @@ export default function WildGuardChat() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const lastUserSendRef = useRef<number>(0);
 
+  const t = useMemo(() => L(language), [language]);
   const active = useMemo(() => conversations.find((c) => c.id === activeId) || null, [conversations, activeId]);
   const messages = active?.messages ?? [];
   const empty = messages.length === 0;
@@ -110,9 +227,15 @@ export default function WildGuardChat() {
     setEntered(safeGet(ENTERED_KEY) === "1");
     setConversations(loadConvs());
     setLanguage(safeGet(LANG_KEY) || "English");
-    setSlogan(SLOGAN_POOL[Math.floor(Math.random() * SLOGAN_POOL.length)]);
-    setScenarios(pickRandom(SCENARIO_POOL, 6));
   }, []);
+
+  // Re-localize slogan + scenarios when language changes
+  useEffect(() => {
+    const loc = L(language);
+    setSlogan(loc.slogans[Math.floor(Math.random() * loc.slogans.length)]);
+    setScenarios(pickRandom(loc.scenarios, 6));
+    setRotateKey((k) => k + 1);
+  }, [language]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -155,11 +278,12 @@ export default function WildGuardChat() {
   }, [messages.length]);
 
   function rotatePrompts() {
+    const loc = L(language);
     setSlogan((prev) => {
-      const others = SLOGAN_POOL.filter((s) => s !== prev);
-      return others[Math.floor(Math.random() * others.length)];
+      const others = loc.slogans.filter((s) => s !== prev);
+      return (others.length ? others : loc.slogans)[Math.floor(Math.random() * Math.max(others.length, 1))];
     });
-    setScenarios(pickRandom(SCENARIO_POOL, 6));
+    setScenarios(pickRandom(loc.scenarios, 6));
     setRotateKey((k) => k + 1);
   }
 
@@ -509,6 +633,9 @@ export default function WildGuardChat() {
                         <div className="text-xs font-medium truncate">{user.user_metadata?.name || "Signed in"}</div>
                         <div className="text-[10px] text-muted-foreground truncate">{user.email}</div>
                       </div>
+                      <button onClick={async () => { await supabase.auth.signOut(); setUserMenu(false); signInGoogle(); }} className="w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-secondary text-left border-b border-border">
+                        <LogIn className="h-3.5 w-3.5" /> Switch / add another account
+                      </button>
                       <button onClick={signOut} className="w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-secondary text-left">
                         <LogOut className="h-3.5 w-3.5" /> Sign out
                       </button>
@@ -536,9 +663,7 @@ export default function WildGuardChat() {
                         {slogan}
                       </h2>
                       <div className="mt-7 space-y-1.5 text-[13px] sm:text-[15px] text-foreground/70">
-                        <p>Saw something cruel? Report it.</p>
-                        <p>Don't know the law? Ask.</p>
-                        <p>Need to file a complaint? I'll write it for you.</p>
+                        {t.helperLines.map((line, i) => <p key={i}>{line}</p>)}
                       </div>
                     </div>
 
@@ -555,7 +680,6 @@ export default function WildGuardChat() {
 
                     <div className="mt-8 flex flex-wrap items-center justify-center gap-2">
                       <a href="tel:112" className="rounded-full bg-emergency text-emergency-foreground px-4 py-2 text-[12px] font-semibold hover:opacity-90 transition wg-pulse-soft">Emergency 112</a>
-                      <a href="tel:1926" className="rounded-full bg-card border border-border px-4 py-2 text-[12px] font-semibold hover:border-primary/40 transition">Forest 1926</a>
                       <a href="tel:+91-22-40727382" className="rounded-full bg-card border border-border px-4 py-2 text-[12px] font-semibold hover:border-primary/40 transition">PETA India</a>
                       <button onClick={newChat} className="rounded-full bg-primary text-primary-foreground px-4 py-2 text-[12px] font-semibold hover:bg-primary/90 transition inline-flex items-center gap-1.5">
                         <Plus className="h-3.5 w-3.5" /> New Chat
@@ -564,7 +688,7 @@ export default function WildGuardChat() {
 
                     {!user && (
                       <div className="mt-5 text-center text-[11px] text-muted-foreground italic">
-                        <button onClick={signInGoogle} className="underline hover:text-primary">Sign in with Google</button> to save your chats across devices.
+                        <button onClick={signInGoogle} className="underline hover:text-primary">{t.signInGoogle}</button> — {t.saveHint}
                       </div>
                     )}
                   </div>
@@ -598,7 +722,7 @@ export default function WildGuardChat() {
                   className="flex items-end gap-2 rounded-full border border-border bg-card px-2 py-1.5 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/15 transition shadow-sm">
                   <textarea value={input} onChange={(e) => setInput(e.target.value)}
                     onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(input); } }}
-                    placeholder="Describe what you witnessed, or ask about wildlife laws…"
+                    placeholder={t.placeholder}
                     rows={1}
                     className="flex-1 resize-none bg-transparent px-3 py-2 text-sm outline-none placeholder:text-muted-foreground max-h-40"
                     style={{ minHeight: 36 }} />
