@@ -316,18 +316,18 @@ export default function WildGuardChat() {
           </div>
         </div>
 
-        {/* Single text block — right aligned, no bg duplicate text */}
-        <div className="relative h-full flex items-center justify-end px-6 sm:px-16 z-10">
-          <div className="text-white text-right max-w-xl wg-fade-up">
-            <h1 className="font-display font-bold text-5xl sm:text-7xl leading-[0.95] tracking-tight drop-shadow-2xl">
-              THEIR VOICE.<br />YOUR ACTION.
-            </h1>
-            <p className="mt-4 text-white/70 text-sm sm:text-base tracking-wide max-w-sm ml-auto">
+        {/* Bottom-anchored minimal text — avoids overlapping any text in the hero image */}
+        <div className="relative h-full flex flex-col justify-end items-center sm:items-end px-6 sm:px-16 pb-10 sm:pb-16 z-10">
+          <div className="text-white text-center sm:text-right max-w-xl wg-fade-up">
+            <p className="text-[10px] sm:text-xs tracking-[0.35em] font-semibold text-white/80 uppercase">
+              India Wildlife &amp; Animal Protection AI
+            </p>
+            <p className="mt-3 text-white/85 text-sm sm:text-base tracking-wide max-w-sm sm:ml-auto mx-auto">
               Report cruelty. Know the law. Protect wildlife.
             </p>
             <button
               onClick={() => { safeSet(ENTERED_KEY, "1"); setEntered(true); }}
-              className="mt-8 inline-flex items-center gap-3 border border-white/70 px-6 py-3 text-sm tracking-[0.2em] font-semibold hover:bg-white hover:text-black transition-all duration-300"
+              className="mt-6 inline-flex items-center gap-3 border border-white/70 px-6 py-3 text-sm tracking-[0.2em] font-semibold hover:bg-white hover:text-black transition-all duration-300"
             >
               ENTER <ArrowRight className="h-4 w-4" />
             </button>
