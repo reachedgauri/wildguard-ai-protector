@@ -305,7 +305,7 @@ export default function WildGuardChat() {
       <div className="relative h-dvh w-full overflow-hidden bg-black">
         <img src={rhinoHero} alt="Indian rhinoceros" className="absolute inset-0 h-full w-full object-cover" />
         {/* Gradient only on the right side where text sits — no left overlay to keep rhino visible */}
-        <div className="absolute inset-0 bg-gradient-to-l from-black/80 via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
 
         {/* Logo top-left */}
         <div className="absolute top-6 left-6 flex items-center gap-2 text-white/95 z-10">
@@ -316,18 +316,18 @@ export default function WildGuardChat() {
           </div>
         </div>
 
-        {/* Single text block — right aligned, no bg duplicate text */}
-        <div className="relative h-full flex items-center justify-end px-6 sm:px-16 z-10">
-          <div className="text-white text-right max-w-xl wg-fade-up">
-            <h1 className="font-display font-bold text-5xl sm:text-7xl leading-[0.95] tracking-tight drop-shadow-2xl">
-              THEIR VOICE.<br />YOUR ACTION.
-            </h1>
-            <p className="mt-4 text-white/70 text-sm sm:text-base tracking-wide max-w-sm ml-auto">
+        {/* Bottom-anchored minimal text — avoids overlapping any text in the hero image */}
+        <div className="relative h-full flex flex-col justify-end items-center sm:items-end px-6 sm:px-16 pb-10 sm:pb-16 z-10">
+          <div className="text-white text-center sm:text-right max-w-xl wg-fade-up">
+            <p className="text-[10px] sm:text-xs tracking-[0.35em] font-semibold text-white/80 uppercase">
+              India Wildlife &amp; Animal Protection AI
+            </p>
+            <p className="mt-3 text-white/85 text-sm sm:text-base tracking-wide max-w-sm sm:ml-auto mx-auto">
               Report cruelty. Know the law. Protect wildlife.
             </p>
             <button
               onClick={() => { safeSet(ENTERED_KEY, "1"); setEntered(true); }}
-              className="mt-8 inline-flex items-center gap-3 border border-white/70 px-6 py-3 text-sm tracking-[0.2em] font-semibold hover:bg-white hover:text-black transition-all duration-300"
+              className="mt-6 inline-flex items-center gap-3 border border-white/70 px-6 py-3 text-sm tracking-[0.2em] font-semibold hover:bg-white hover:text-black transition-all duration-300"
             >
               ENTER <ArrowRight className="h-4 w-4" />
             </button>
@@ -366,7 +366,7 @@ export default function WildGuardChat() {
         {/* Sidebar */}
         <aside className="hidden lg:flex relative w-[280px] shrink-0 flex-col text-white overflow-hidden">
           <img src={leavesBg} alt="" className="absolute inset-0 h-full w-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/55 to-black/75" />
+          <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/35 via-emerald-950/25 to-emerald-950/55" />
           {/* FIX 2: Added wg-sidebar-scroll class for bright scrollbar */}
           <div className="relative flex flex-col h-full p-6 overflow-y-auto wg-sidebar-scroll">
             <div className="flex items-center gap-2.5">
