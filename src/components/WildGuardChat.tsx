@@ -305,7 +305,7 @@ export default function WildGuardChat() {
       <div className="relative h-dvh w-full overflow-hidden bg-black">
         <img src={rhinoHero} alt="Indian rhinoceros" className="absolute inset-0 h-full w-full object-cover" />
         {/* Gradient only on the right side where text sits — no left overlay to keep rhino visible */}
-        <div className="absolute inset-0 bg-gradient-to-l from-black/80 via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
 
         {/* Logo top-left */}
         <div className="absolute top-6 left-6 flex items-center gap-2 text-white/95 z-10">
