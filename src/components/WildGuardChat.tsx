@@ -633,6 +633,9 @@ export default function WildGuardChat() {
                         <div className="text-xs font-medium truncate">{user.user_metadata?.name || "Signed in"}</div>
                         <div className="text-[10px] text-muted-foreground truncate">{user.email}</div>
                       </div>
+                      <button onClick={async () => { await supabase.auth.signOut(); setUserMenu(false); signInGoogle(); }} className="w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-secondary text-left border-b border-border">
+                        <LogIn className="h-3.5 w-3.5" /> Switch / add another account
+                      </button>
                       <button onClick={signOut} className="w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-secondary text-left">
                         <LogOut className="h-3.5 w-3.5" /> Sign out
                       </button>
