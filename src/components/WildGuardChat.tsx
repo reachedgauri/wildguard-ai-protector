@@ -696,7 +696,7 @@ export default function WildGuardChat() {
 
                     {!user && (
                       <div className="mt-5 text-center text-[11px] text-muted-foreground italic">
-                        <button onClick={signInGoogle} className="underline hover:text-primary">{t.signInGoogle}</button> — {t.saveHint}
+                        <button onClick={() => signInGoogle()} className="underline hover:text-primary">{t.signInGoogle}</button> — {t.saveHint}
                       </div>
                     )}
                   </div>
