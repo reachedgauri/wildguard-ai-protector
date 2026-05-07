@@ -529,29 +529,19 @@ export default function WildGuardChat() {
             </div>
 
             <div className="mt-8 flex-1">
-              <div className="text-[10px] tracking-[0.25em] font-semibold opacity-80 mb-3">KEY LAWS COVERED · TAP TO FLIP</div>
+              <div className="text-[10px] tracking-[0.25em] font-semibold opacity-80 mb-3">KEY LAWS COVERED · TAP TO OPEN</div>
               <div className="grid grid-cols-2 gap-2">
-                {KEY_LAWS.map((l) => {
-                  const isFlipped = flippedLaw === l.code;
-                  return (
-                    <button
-                      key={l.code}
-                      type="button"
-                      onClick={() => setFlippedLaw(isFlipped ? null : l.code)}
-                      className={`wg-flip ${isFlipped ? "is-flipped" : ""} relative h-[92px] text-left`}
-                    >
-                      <div className="wg-flip-inner">
-                        <div className={`wg-flip-face bg-gradient-to-br ${l.gradient} border border-white/15 px-3 py-2.5 shadow-md`}>
-                          <div className="text-[11px] font-semibold leading-tight text-white">{l.code}</div>
-                          <div className="text-[9.5px] opacity-85 mt-1 text-white">{l.sub}</div>
-                        </div>
-                        <div className="wg-flip-face wg-flip-back bg-gradient-to-br from-emerald-950/95 to-stone-900/95 border border-white/20 px-3 py-2.5">
-                          <div className="text-[10px] leading-snug text-white/95">{l.detail}</div>
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })}
+                {KEY_LAWS.map((l) => (
+                  <button
+                    key={l.code}
+                    type="button"
+                    onClick={() => setFlippedLaw(l.code)}
+                    className={`relative h-[92px] text-left rounded-lg overflow-hidden bg-gradient-to-br ${l.gradient} border border-white/15 px-3 py-2.5 shadow-md hover:scale-[1.03] transition-transform`}
+                  >
+                    <div className="text-[11px] font-semibold leading-tight text-white">{l.code}</div>
+                    <div className="text-[9.5px] opacity-85 mt-1 text-white">{l.sub}</div>
+                  </button>
+                ))}
               </div>
 
               <a
