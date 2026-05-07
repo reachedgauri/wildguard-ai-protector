@@ -846,7 +846,7 @@ function Bubble({ msg, isLast }: { msg: Msg; isLast?: boolean }) {
           ? "max-w-[85%] rounded-2xl rounded-br-md bg-primary text-primary-foreground px-4 py-2.5 text-sm leading-relaxed shadow-sm whitespace-pre-wrap"
           : `max-w-[92%] rounded-2xl rounded-bl-md bg-card border border-border px-4 py-3 text-[15px] text-card-foreground shadow-md wg-prose ${isLast ? "ring-1 ring-primary/10" : ""}`
       }>
-        {isUser ? msg.content : <ReactMarkdown>{msg.content || "…"}</ReactMarkdown>}
+        {isUser ? msg.content : <ReactMarkdown rehypePlugins={[rehypeRaw]}>{preprocessHighlights(msg.content || "…")}</ReactMarkdown>}
       </div>
     </div>
   );
