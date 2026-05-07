@@ -1,5 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+
+function preprocessHighlights(s: string) {
+  // ==!text== -> red mark, ==text== -> yellow mark
+  return s
+    .replace(/==!([^=]+)==/g, '<mark class="wg-mark-red">$1</mark>')
+    .replace(/==([^=]+)==/g, '<mark class="wg-mark-yellow">$1</mark>');
+}
 import {
   Send, Globe, Plus, Share2, History, Download,
   ChevronDown, Loader2, Check, Trash2, X, LogIn, LogOut, ArrowRight,
