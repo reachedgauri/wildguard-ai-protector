@@ -217,6 +217,7 @@ export default function WildGuardChat() {
   const prevUserRef = useRef<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const lastUserSendRef = useRef<number>(0);
+  const [flippedLaw, setFlippedLaw] = useState<string | null>(null);
 
   const t = useMemo(() => L(language), [language]);
   const active = useMemo(() => conversations.find((c) => c.id === activeId) || null, [conversations, activeId]);
