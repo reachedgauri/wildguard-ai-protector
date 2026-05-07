@@ -702,7 +702,7 @@ export default function WildGuardChat() {
                 {empty ? (
                   <div>
                     <div key={`slogan-${rotateKey}`} className="wg-slogan text-center">
-                      <h2 className="font-display font-bold text-primary leading-[0.95] tracking-tight text-[2rem] sm:text-[3.4rem]">
+                      <h2 className="wg-slogan-font font-bold text-primary leading-[0.95] tracking-tight text-[2.2rem] sm:text-[3.6rem]">
                         {slogan}
                       </h2>
                       <div className="mt-7 space-y-1.5 text-[13px] sm:text-[15px] text-foreground/70">
