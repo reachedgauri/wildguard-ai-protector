@@ -295,12 +295,20 @@ export default function WildGuardChat() {
     }
   }, [langOpen, pastOpen, userMenu]);
 
-  async function signInGoogle() {
+  async function signInGoogle(forceSelect = false) {
     setAuthLoading(true);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+      extraParams: forceSelect ? { prompt: "select_account" } : undefined,
+    });
     if (result.error) { toast.error("Sign-in failed"); setAuthLoading(false); return; }
     if (result.redirected) return;
     setAuthLoading(false);
+  }
+  async function switchAccount() {
+    setUserMenu(false);
+    try { await supabase.auth.signOut(); } catch {}
+    await signInGoogle(true);
   }
   async function signOut() {
     await supabase.auth.signOut();
