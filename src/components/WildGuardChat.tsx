@@ -521,15 +521,41 @@ export default function WildGuardChat() {
             </div>
 
             <div className="mt-8 flex-1">
-              <div className="text-[10px] tracking-[0.25em] font-semibold opacity-80 mb-3">KEY LAWS COVERED</div>
-              <div className="space-y-2">
-                {KEY_LAWS.map((l) => (
-                  <div key={l.code} className="rounded-md bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 px-3.5 py-2.5 transition">
-                    <div className="text-[12px] font-semibold leading-tight">{l.code}</div>
-                    <div className="text-[10px] opacity-70 mt-0.5">{l.sub}</div>
-                  </div>
-                ))}
+              <div className="text-[10px] tracking-[0.25em] font-semibold opacity-80 mb-3">KEY LAWS COVERED · TAP TO FLIP</div>
+              <div className="grid grid-cols-2 gap-2">
+                {KEY_LAWS.map((l) => {
+                  const isFlipped = flippedLaw === l.code;
+                  return (
+                    <button
+                      key={l.code}
+                      type="button"
+                      onClick={() => setFlippedLaw(isFlipped ? null : l.code)}
+                      className={`wg-flip ${isFlipped ? "is-flipped" : ""} relative h-[92px] text-left`}
+                    >
+                      <div className="wg-flip-inner">
+                        <div className={`wg-flip-face bg-gradient-to-br ${l.gradient} border border-white/15 px-3 py-2.5 shadow-md`}>
+                          <div className="text-[11px] font-semibold leading-tight text-white">{l.code}</div>
+                          <div className="text-[9.5px] opacity-85 mt-1 text-white">{l.sub}</div>
+                        </div>
+                        <div className="wg-flip-face wg-flip-back bg-gradient-to-br from-emerald-950/95 to-stone-900/95 border border-white/20 px-3 py-2.5">
+                          <div className="text-[10px] leading-snug text-white/95">{l.detail}</div>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
+
+              <a
+                href="tel:+91-22-40727382"
+                className="mt-5 flex items-center justify-between rounded-md bg-gradient-to-r from-rose-600 to-orange-600 px-3.5 py-2.5 shadow-md hover:opacity-95 transition"
+              >
+                <div>
+                  <div className="text-[11px] font-bold text-white tracking-wide">CALL PETA INDIA</div>
+                  <div className="text-[9.5px] text-white/85 mt-0.5">+91-22-40727382 · 24×7 cruelty</div>
+                </div>
+                <div className="text-white text-lg">📞</div>
+              </a>
             </div>
           </div>
         </aside>
