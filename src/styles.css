@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Supermercado+One&display=swap");
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -33,6 +34,7 @@
   --color-emergency: var(--emergency);
   --color-emergency-foreground: var(--emergency-foreground);
   --font-display: "Fraunces", Georgia, serif;
+  --font-slogan: "Oswald", "Supermercado One", "Fraunces", sans-serif;
   --font-sans: "Inter", system-ui, sans-serif;
 }
 
@@ -208,3 +210,33 @@
   overflow: hidden;
 }
 .wg-flip-back { transform: rotateY(180deg); }
+
+/* Slogan font override */
+.wg-slogan-font {
+  font-family: var(--font-slogan);
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+/* Highlights */
+.wg-mark-yellow {
+  background: linear-gradient(180deg, transparent 55%, rgba(250, 204, 21, 0.55) 55%);
+  color: inherit;
+  padding: 0 0.15em;
+  border-radius: 2px;
+  font-weight: 600;
+}
+.wg-mark-red {
+  background: linear-gradient(180deg, transparent 50%, rgba(239, 68, 68, 0.45) 50%);
+  color: inherit;
+  padding: 0 0.15em;
+  border-radius: 2px;
+  font-weight: 700;
+}
+
+/* Law popup card */
+@keyframes wg-pop-in {
+  0% { opacity: 0; transform: scale(0.85) rotateY(-25deg); }
+  100% { opacity: 1; transform: scale(1) rotateY(0); }
+}
+.wg-pop-in { animation: wg-pop-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; transform-style: preserve-3d; }

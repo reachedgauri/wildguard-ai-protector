@@ -1,5 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
+
+function preprocessHighlights(s: string) {
+  // ==!text== -> red mark, ==text== -> yellow mark
+  return s
+    .replace(/==!([^=]+)==/g, '<mark class="wg-mark-red">$1</mark>')
+    .replace(/==([^=]+)==/g, '<mark class="wg-mark-yellow">$1</mark>');
+}
 import {
   Send, Globe, Plus, Share2, History, Download,
   ChevronDown, Loader2, Check, Trash2, X, LogIn, LogOut, ArrowRight,
@@ -521,29 +529,19 @@ export default function WildGuardChat() {
             </div>
 
             <div className="mt-8 flex-1">
-              <div className="text-[10px] tracking-[0.25em] font-semibold opacity-80 mb-3">KEY LAWS COVERED · TAP TO FLIP</div>
+              <div className="text-[10px] tracking-[0.25em] font-semibold opacity-80 mb-3">KEY LAWS COVERED · TAP TO OPEN</div>
               <div className="grid grid-cols-2 gap-2">
-                {KEY_LAWS.map((l) => {
-                  const isFlipped = flippedLaw === l.code;
-                  return (
-                    <button
-                      key={l.code}
-                      type="button"
-                      onClick={() => setFlippedLaw(isFlipped ? null : l.code)}
-                      className={`wg-flip ${isFlipped ? "is-flipped" : ""} relative h-[92px] text-left`}
-                    >
-                      <div className="wg-flip-inner">
-                        <div className={`wg-flip-face bg-gradient-to-br ${l.gradient} border border-white/15 px-3 py-2.5 shadow-md`}>
-                          <div className="text-[11px] font-semibold leading-tight text-white">{l.code}</div>
-                          <div className="text-[9.5px] opacity-85 mt-1 text-white">{l.sub}</div>
-                        </div>
-                        <div className="wg-flip-face wg-flip-back bg-gradient-to-br from-emerald-950/95 to-stone-900/95 border border-white/20 px-3 py-2.5">
-                          <div className="text-[10px] leading-snug text-white/95">{l.detail}</div>
-                        </div>
-                      </div>
-                    </button>
-                  );
-                })}
+                {KEY_LAWS.map((l) => (
+                  <button
+                    key={l.code}
+                    type="button"
+                    onClick={() => setFlippedLaw(l.code)}
+                    className={`relative h-[92px] text-left rounded-lg overflow-hidden bg-gradient-to-br ${l.gradient} border border-white/15 px-3 py-2.5 shadow-md hover:scale-[1.03] transition-transform`}
+                  >
+                    <div className="text-[11px] font-semibold leading-tight text-white">{l.code}</div>
+                    <div className="text-[9.5px] opacity-85 mt-1 text-white">{l.sub}</div>
+                  </button>
+                ))}
               </div>
 
               <a
@@ -694,7 +692,7 @@ export default function WildGuardChat() {
                 {empty ? (
                   <div>
                     <div key={`slogan-${rotateKey}`} className="wg-slogan text-center">
-                      <h2 className="font-display font-bold text-primary leading-[0.95] tracking-tight text-[2rem] sm:text-[3.4rem]">
+                      <h2 className="wg-slogan-font font-bold text-primary leading-[0.95] tracking-tight text-[2.2rem] sm:text-[3.6rem]">
                         {slogan}
                       </h2>
                       <div className="mt-7 space-y-1.5 text-[13px] sm:text-[15px] text-foreground/70">
@@ -786,6 +784,36 @@ export default function WildGuardChat() {
             </div>
           </div>
         )}
+
+        {/* Law detail popup */}
+        {flippedLaw && (() => {
+          const law = KEY_LAWS.find((l) => l.code === flippedLaw);
+          if (!law) return null;
+          return (
+            <div
+              onClick={() => setFlippedLaw(null)}
+              className="fixed inset-0 z-[120] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 wg-fade-up"
+            >
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className={`wg-pop-in relative w-full max-w-md rounded-2xl bg-gradient-to-br ${law.gradient} border border-white/20 shadow-2xl p-6 sm:p-8 text-white`}
+              >
+                <button
+                  onClick={() => setFlippedLaw(null)}
+                  className="absolute top-3 right-3 h-8 w-8 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center"
+                  aria-label="Close"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+                <div className="text-[10px] tracking-[0.3em] opacity-80 mb-2">KEY LAW</div>
+                <div className="text-xl sm:text-2xl font-bold leading-tight">{law.code}</div>
+                <div className="text-sm opacity-90 mt-1">{law.sub}</div>
+                <div className="mt-5 h-px bg-white/20" />
+                <p className="text-[14px] sm:text-[15px] leading-relaxed mt-4 text-white/95">{law.detail}</p>
+              </div>
+            </div>
+          );
+        })()}
       </div>
     </>
   );
@@ -838,7 +866,7 @@ function Bubble({ msg, isLast }: { msg: Msg; isLast?: boolean }) {
           ? "max-w-[85%] rounded-2xl rounded-br-md bg-primary text-primary-foreground px-4 py-2.5 text-sm leading-relaxed shadow-sm whitespace-pre-wrap"
           : `max-w-[92%] rounded-2xl rounded-bl-md bg-card border border-border px-4 py-3 text-[15px] text-card-foreground shadow-md wg-prose ${isLast ? "ring-1 ring-primary/10" : ""}`
       }>
-        {isUser ? msg.content : <ReactMarkdown>{msg.content || "…"}</ReactMarkdown>}
+        {isUser ? msg.content : <ReactMarkdown rehypePlugins={[rehypeRaw]}>{preprocessHighlights(msg.content || "…")}</ReactMarkdown>}
       </div>
     </div>
   );
