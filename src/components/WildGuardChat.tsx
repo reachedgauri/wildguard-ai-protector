@@ -174,13 +174,13 @@ function L(language: string): LocalContent {
   return { ...fallback, ...loc } as LocalContent;
 }
 
-const KEY_LAWS = [
-  { code: "WPA 1972 (Amended 2022)", sub: "4 schedules · 2,600+ species" },
-  { code: "PCA Act 1960", sub: "Animal welfare · AWBI · Sec 11" },
-  { code: "BNS Section 325 (2024)", sub: "Replaces IPC 428/429" },
-  { code: "Forest Conservation Act", sub: "Diversion · clearance · NPV" },
-  { code: "Biological Diversity Act", sub: "Bio-resources · NBA · access" },
-  { code: "BD Act / EPA 1986", sub: "Environment umbrella law" },
+const KEY_LAWS: { code: string; sub: string; detail: string; gradient: string }[] = [
+  { code: "WPA 1972 (Amended 2022)", sub: "4 schedules · 2,600+ species", detail: "Sec 51: 3–7 yrs jail + min ₹25,000 fine for Schedule I offences. Bail barred under 51A.", gradient: "from-emerald-600/80 to-teal-700/80" },
+  { code: "PCA Act 1960", sub: "Animal welfare · AWBI · Sec 11", detail: "Sec 11 lists every cruelty offence. Enforced by AWBI + local police.", gradient: "from-amber-600/80 to-orange-700/80" },
+  { code: "BNS Section 325 (2024)", sub: "Replaces IPC 428/429", detail: "Mischief by killing/maiming animal. Up to 5 years imprisonment.", gradient: "from-rose-600/80 to-red-700/80" },
+  { code: "Forest Conservation Act 1980", sub: "Diversion · clearance · NPV", detail: "Controls diversion of forest land for non-forest use. Central clearance required.", gradient: "from-green-700/80 to-emerald-800/80" },
+  { code: "Biological Diversity Act 2002", sub: "Bio-resources · NBA · access", detail: "Regulates access to bio-resources. NBA approval mandatory for foreign access.", gradient: "from-cyan-600/80 to-blue-700/80" },
+  { code: "EPA 1986", sub: "Environment umbrella law", detail: "Empowers Centre to protect & improve environment. Pollution control authority.", gradient: "from-indigo-600/80 to-violet-700/80" },
 ];
 
 function pickRandom<T>(arr: T[], n: number): T[] {
@@ -217,6 +217,7 @@ export default function WildGuardChat() {
   const prevUserRef = useRef<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const lastUserSendRef = useRef<number>(0);
+  const [flippedLaw, setFlippedLaw] = useState<string | null>(null);
 
   const t = useMemo(() => L(language), [language]);
   const active = useMemo(() => conversations.find((c) => c.id === activeId) || null, [conversations, activeId]);
@@ -295,12 +296,20 @@ export default function WildGuardChat() {
     }
   }, [langOpen, pastOpen, userMenu]);
 
-  async function signInGoogle() {
+  async function signInGoogle(forceSelect = false) {
     setAuthLoading(true);
-    const result = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin });
+    const result = await lovable.auth.signInWithOAuth("google", {
+      redirect_uri: window.location.origin,
+      extraParams: forceSelect ? { prompt: "select_account" } : undefined,
+    });
     if (result.error) { toast.error("Sign-in failed"); setAuthLoading(false); return; }
     if (result.redirected) return;
     setAuthLoading(false);
+  }
+  async function switchAccount() {
+    setUserMenu(false);
+    try { await supabase.auth.signOut(); } catch {}
+    await signInGoogle(true);
   }
   async function signOut() {
     await supabase.auth.signOut();
@@ -512,15 +521,41 @@ export default function WildGuardChat() {
             </div>
 
             <div className="mt-8 flex-1">
-              <div className="text-[10px] tracking-[0.25em] font-semibold opacity-80 mb-3">KEY LAWS COVERED</div>
-              <div className="space-y-2">
-                {KEY_LAWS.map((l) => (
-                  <div key={l.code} className="rounded-md bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 px-3.5 py-2.5 transition">
-                    <div className="text-[12px] font-semibold leading-tight">{l.code}</div>
-                    <div className="text-[10px] opacity-70 mt-0.5">{l.sub}</div>
-                  </div>
-                ))}
+              <div className="text-[10px] tracking-[0.25em] font-semibold opacity-80 mb-3">KEY LAWS COVERED · TAP TO FLIP</div>
+              <div className="grid grid-cols-2 gap-2">
+                {KEY_LAWS.map((l) => {
+                  const isFlipped = flippedLaw === l.code;
+                  return (
+                    <button
+                      key={l.code}
+                      type="button"
+                      onClick={() => setFlippedLaw(isFlipped ? null : l.code)}
+                      className={`wg-flip ${isFlipped ? "is-flipped" : ""} relative h-[92px] text-left`}
+                    >
+                      <div className="wg-flip-inner">
+                        <div className={`wg-flip-face bg-gradient-to-br ${l.gradient} border border-white/15 px-3 py-2.5 shadow-md`}>
+                          <div className="text-[11px] font-semibold leading-tight text-white">{l.code}</div>
+                          <div className="text-[9.5px] opacity-85 mt-1 text-white">{l.sub}</div>
+                        </div>
+                        <div className="wg-flip-face wg-flip-back bg-gradient-to-br from-emerald-950/95 to-stone-900/95 border border-white/20 px-3 py-2.5">
+                          <div className="text-[10px] leading-snug text-white/95">{l.detail}</div>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
+
+              <a
+                href="tel:+91-22-40727382"
+                className="mt-5 flex items-center justify-between rounded-md bg-gradient-to-r from-rose-600 to-orange-600 px-3.5 py-2.5 shadow-md hover:opacity-95 transition"
+              >
+                <div>
+                  <div className="text-[11px] font-bold text-white tracking-wide">CALL PETA INDIA</div>
+                  <div className="text-[9.5px] text-white/85 mt-0.5">+91-22-40727382 · 24×7 cruelty</div>
+                </div>
+                <div className="text-white text-lg">📞</div>
+              </a>
             </div>
           </div>
         </aside>
@@ -633,7 +668,7 @@ export default function WildGuardChat() {
                         <div className="text-xs font-medium truncate">{user.user_metadata?.name || "Signed in"}</div>
                         <div className="text-[10px] text-muted-foreground truncate">{user.email}</div>
                       </div>
-                      <button onClick={async () => { await supabase.auth.signOut(); setUserMenu(false); signInGoogle(); }} className="w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-secondary text-left border-b border-border">
+                      <button onClick={switchAccount} className="w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-secondary text-left border-b border-border">
                         <LogIn className="h-3.5 w-3.5" /> Switch / add another account
                       </button>
                       <button onClick={signOut} className="w-full flex items-center gap-2 px-3 py-2 text-xs hover:bg-secondary text-left">
@@ -643,7 +678,7 @@ export default function WildGuardChat() {
                   )}
                 </div>
               ) : (
-                <button onClick={signInGoogle} disabled={authLoading}
+                <button onClick={() => signInGoogle()} disabled={authLoading}
                   className="flex items-center gap-1.5 rounded-md bg-primary text-primary-foreground px-3 h-9 text-xs font-semibold hover:bg-primary/90 disabled:opacity-60 transition">
                   {authLoading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <LogIn className="h-3.5 w-3.5" />}
                   Sign in
@@ -688,7 +723,7 @@ export default function WildGuardChat() {
 
                     {!user && (
                       <div className="mt-5 text-center text-[11px] text-muted-foreground italic">
-                        <button onClick={signInGoogle} className="underline hover:text-primary">{t.signInGoogle}</button> — {t.saveHint}
+                        <button onClick={() => signInGoogle()} className="underline hover:text-primary">{t.signInGoogle}</button> — {t.saveHint}
                       </div>
                     )}
                   </div>
