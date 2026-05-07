@@ -174,13 +174,13 @@ function L(language: string): LocalContent {
   return { ...fallback, ...loc } as LocalContent;
 }
 
-const KEY_LAWS = [
-  { code: "WPA 1972 (Amended 2022)", sub: "4 schedules · 2,600+ species" },
-  { code: "PCA Act 1960", sub: "Animal welfare · AWBI · Sec 11" },
-  { code: "BNS Section 325 (2024)", sub: "Replaces IPC 428/429" },
-  { code: "Forest Conservation Act", sub: "Diversion · clearance · NPV" },
-  { code: "Biological Diversity Act", sub: "Bio-resources · NBA · access" },
-  { code: "BD Act / EPA 1986", sub: "Environment umbrella law" },
+const KEY_LAWS: { code: string; sub: string; detail: string; gradient: string }[] = [
+  { code: "WPA 1972 (Amended 2022)", sub: "4 schedules · 2,600+ species", detail: "Sec 51: 3–7 yrs jail + min ₹25,000 fine for Schedule I offences. Bail barred under 51A.", gradient: "from-emerald-600/80 to-teal-700/80" },
+  { code: "PCA Act 1960", sub: "Animal welfare · AWBI · Sec 11", detail: "Sec 11 lists every cruelty offence. Enforced by AWBI + local police.", gradient: "from-amber-600/80 to-orange-700/80" },
+  { code: "BNS Section 325 (2024)", sub: "Replaces IPC 428/429", detail: "Mischief by killing/maiming animal. Up to 5 years imprisonment.", gradient: "from-rose-600/80 to-red-700/80" },
+  { code: "Forest Conservation Act 1980", sub: "Diversion · clearance · NPV", detail: "Controls diversion of forest land for non-forest use. Central clearance required.", gradient: "from-green-700/80 to-emerald-800/80" },
+  { code: "Biological Diversity Act 2002", sub: "Bio-resources · NBA · access", detail: "Regulates access to bio-resources. NBA approval mandatory for foreign access.", gradient: "from-cyan-600/80 to-blue-700/80" },
+  { code: "EPA 1986", sub: "Environment umbrella law", detail: "Empowers Centre to protect & improve environment. Pollution control authority.", gradient: "from-indigo-600/80 to-violet-700/80" },
 ];
 
 function pickRandom<T>(arr: T[], n: number): T[] {
