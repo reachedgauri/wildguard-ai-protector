@@ -784,6 +784,36 @@ export default function WildGuardChat() {
             </div>
           </div>
         )}
+
+        {/* Law detail popup */}
+        {flippedLaw && (() => {
+          const law = KEY_LAWS.find((l) => l.code === flippedLaw);
+          if (!law) return null;
+          return (
+            <div
+              onClick={() => setFlippedLaw(null)}
+              className="fixed inset-0 z-[120] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 wg-fade-up"
+            >
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className={`wg-pop-in relative w-full max-w-md rounded-2xl bg-gradient-to-br ${law.gradient} border border-white/20 shadow-2xl p-6 sm:p-8 text-white`}
+              >
+                <button
+                  onClick={() => setFlippedLaw(null)}
+                  className="absolute top-3 right-3 h-8 w-8 rounded-full bg-black/30 hover:bg-black/50 flex items-center justify-center"
+                  aria-label="Close"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+                <div className="text-[10px] tracking-[0.3em] opacity-80 mb-2">KEY LAW</div>
+                <div className="text-xl sm:text-2xl font-bold leading-tight">{law.code}</div>
+                <div className="text-sm opacity-90 mt-1">{law.sub}</div>
+                <div className="mt-5 h-px bg-white/20" />
+                <p className="text-[14px] sm:text-[15px] leading-relaxed mt-4 text-white/95">{law.detail}</p>
+              </div>
+            </div>
+          );
+        })()}
       </div>
     </>
   );
